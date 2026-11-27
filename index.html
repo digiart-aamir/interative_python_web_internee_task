@@ -1,0 +1,2997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Variables &amp; Data Types — Interactive Visual Explainer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg-base: #06080f;
+      --bg-elevated: rgba(15, 20, 34, 0.76);
+      --bg-node: rgba(16, 22, 38, 0.92);
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --border-strong: rgba(148, 163, 184, 0.28);
+
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      --c-int: #38bdf8;
+      --c-float: #818cf8;
+      --c-str: #34d399;
+      --c-bool: #fbbf24;
+      --c-list: #fb7185;
+      --c-none: #c084fc;
+      --c-name: #cbd5e1;
+      --c-error: #fb7185;
+
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Hero fills exact first viewport without scroll required */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 560px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+      padding: clamp(0.65rem, 1.5vh, 1.15rem) clamp(0.8rem, 3vw, 2.4rem) clamp(0.45rem, 1.2vh, 0.85rem);
+      gap: clamp(0.32rem, 0.9vh, 0.65rem);
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(60% 45% at 50% 44%, rgba(56, 189, 248, 0.085), transparent 72%),
+        radial-gradient(45% 40% at 20% 24%, rgba(129, 140, 248, 0.07), transparent 70%),
+        radial-gradient(40% 40% at 82% 72%, rgba(251, 113, 133, 0.065), transparent 70%),
+        var(--bg-base);
+    }
+
+    /* Subtle technical dot grid */
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image: radial-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mask-image: radial-gradient(ellipse 82% 76% at 50% 50%, #000 38%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 82% 76% at 50% 50%, #000 38%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* Minimal Top Header */
+    .hero-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      max-width: 1220px;
+      width: 100%;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-title {
+      font-size: clamp(1rem, 1.75vw, 1.38rem);
+      font-weight: 650;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .hero-title span {
+      background: linear-gradient(120deg, #e2e8f0 20%, #38bdf8 62%, #818cf8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.74rem, 1vw, 0.85rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .header-pill-btn {
+      appearance: none;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.65);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.22rem 0.56rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease, opacity 180ms ease;
+    }
+
+    .header-pill-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+      background: rgba(30, 41, 59, 0.85);
+    }
+
+    .reset-btn {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .reset-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Sleek Inline Python Assignment Editor Bar */
+    .editor-shell {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+    }
+
+    .editor-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.36rem 0.5rem 0.36rem 0.65rem;
+      border-radius: 13px;
+      background: rgba(11, 16, 29, 0.84);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 28px rgba(2, 6, 23, 0.45);
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+      flex-wrap: wrap;
+    }
+
+    .editor-bar.is-editing {
+      border-color: rgba(56, 189, 248, 0.38);
+      box-shadow: 0 8px 28px rgba(56, 189, 248, 0.08);
+    }
+
+    .editor-bar.has-error {
+      border-color: rgba(251, 113, 133, 0.6);
+    }
+
+    .mode-badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.48rem;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--c-int);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .assignment-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex: 1 1 260px;
+      min-width: 0;
+    }
+
+    .py-input {
+      appearance: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-primary);
+      background: rgba(2, 6, 23, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px;
+      padding: 0.34rem 0.56rem;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+      min-width: 0;
+    }
+
+    .py-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .py-input:focus {
+      border-color: rgba(56, 189, 248, 0.65);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.14);
+    }
+
+    .py-input.invalid {
+      border-color: rgba(251, 113, 133, 0.8);
+      box-shadow: 0 0 0 2px rgba(251, 113, 133, 0.15);
+    }
+
+    .py-input-name {
+      width: clamp(92px, 14vw, 148px);
+      flex: 0 1 148px;
+    }
+
+    .py-input-val {
+      flex: 1 1 130px;
+    }
+
+    .assign-op {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .detected-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.36rem;
+      padding: 0.28rem 0.62rem;
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.64);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      line-height: 1.2;
+      flex-shrink: 0;
+      user-select: none;
+      transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+    }
+
+    .detected-type-label {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.02em;
+    }
+
+    .detected-type-value {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .detected-type[data-type="int"] {
+      background: rgba(56, 189, 248, 0.13);
+      border-color: rgba(56, 189, 248, 0.42);
+    }
+    .detected-type[data-type="int"] .detected-type-value {
+      color: var(--c-int);
+    }
+
+    .detected-type[data-type="float"] {
+      background: rgba(129, 140, 248, 0.13);
+      border-color: rgba(129, 140, 248, 0.42);
+    }
+    .detected-type[data-type="float"] .detected-type-value {
+      color: var(--c-float);
+    }
+
+    .detected-type[data-type="str"] {
+      background: rgba(52, 211, 153, 0.13);
+      border-color: rgba(52, 211, 153, 0.42);
+    }
+    .detected-type[data-type="str"] .detected-type-value {
+      color: var(--c-str);
+    }
+
+    .detected-type[data-type="bool"] {
+      background: rgba(251, 191, 36, 0.13);
+      border-color: rgba(251, 191, 36, 0.42);
+    }
+    .detected-type[data-type="bool"] .detected-type-value {
+      color: var(--c-bool);
+    }
+
+    .detected-type[data-type="list"] {
+      background: rgba(251, 113, 133, 0.13);
+      border-color: rgba(251, 113, 133, 0.42);
+    }
+    .detected-type[data-type="list"] .detected-type-value {
+      color: var(--c-list);
+    }
+
+    .detected-type[data-type="NoneType"] {
+      background: rgba(192, 132, 252, 0.13);
+      border-color: rgba(192, 132, 252, 0.42);
+    }
+    .detected-type[data-type="NoneType"] .detected-type-value {
+      color: var(--c-none);
+    }
+
+    .detected-type[data-type="invalid"] {
+      background: rgba(251, 113, 133, 0.12);
+      border-color: rgba(251, 113, 133, 0.48);
+    }
+    .detected-type[data-type="invalid"] .detected-type-value {
+      color: #fda4af;
+    }
+
+    .editor-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      appearance: none;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(129, 140, 248, 0.22));
+      color: #f8fafc;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.78rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 120ms ease, filter 160ms ease, border-color 160ms ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.15);
+      border-color: rgba(56, 189, 248, 0.7);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-danger {
+      appearance: none;
+      border: 1px solid rgba(251, 113, 133, 0.38);
+      background: rgba(251, 113, 133, 0.12);
+      color: #fda4af;
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      padding: 0.35rem 0.62rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+      white-space: nowrap;
+    }
+
+    .btn-danger:hover {
+      background: rgba(251, 113, 133, 0.22);
+      border-color: rgba(251, 113, 133, 0.68);
+      color: #ffe4e6;
+    }
+
+    .btn-ghost {
+      appearance: none;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      padding: 0.35rem 0.56rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 150ms ease, border-color 150ms ease;
+      white-space: nowrap;
+    }
+
+    .btn-ghost:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .editor-error {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.24rem 0.65rem;
+      border-radius: 8px;
+      background: rgba(127, 29, 29, 0.35);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      color: #fecdd3;
+      font-size: 0.74rem;
+      line-height: 1.3;
+    }
+
+    .editor-error code {
+      font-family: var(--font-mono);
+      color: #fff1f2;
+      background: rgba(2, 6, 23, 0.45);
+      padding: 0.05rem 0.3rem;
+      border-radius: 4px;
+    }
+
+    /* Main Graph Stage */
+    .graph-stage {
+      position: relative;
+      width: 100%;
+      max-width: 1220px;
+      height: 100%;
+      min-height: 0;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #python-graph {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      display: block;
+      overflow: visible;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* SVG Transitions & Animations */
+    .col-heading {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      fill: #64748b;
+    }
+
+    .edge-group {
+      transition: opacity 220ms ease;
+    }
+
+    .edge-base {
+      fill: none;
+      stroke-linecap: round;
+      transition: stroke-width 220ms ease, stroke-opacity 220ms ease, filter 220ms ease;
+    }
+
+    .edge-flow {
+      fill: none;
+      stroke-linecap: round;
+      stroke-dasharray: 5 16;
+      animation: flowPulse 2.4s linear infinite;
+      pointer-events: none;
+      transition: opacity 220ms ease, stroke-width 220ms ease;
+    }
+
+    .edge-inherit {
+      fill: none;
+      stroke-dasharray: 4 5;
+      stroke-linecap: round;
+      transition: stroke-opacity 220ms ease, stroke-width 220ms ease;
+    }
+
+    @keyframes flowPulse {
+      from {
+        stroke-dashoffset: 42;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .node-group {
+      cursor: pointer;
+      transition: opacity 220ms ease, transform 220ms ease;
+      outline: none;
+    }
+
+    .node-group:focus-visible .node-box {
+      stroke-width: 2;
+      stroke: #f8fafc;
+    }
+
+    .node-box {
+      transition: fill 200ms ease, stroke 200ms ease, stroke-width 200ms ease, filter 220ms ease;
+    }
+
+    .node-halo {
+      transition: opacity 240ms ease;
+      pointer-events: none;
+    }
+
+    .node-label {
+      font-family: var(--font-mono);
+      fill: var(--text-primary);
+      pointer-events: none;
+    }
+
+    .node-sub {
+      font-family: var(--font-sans);
+      fill: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    .node-mono-sub {
+      font-family: var(--font-mono);
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .port-dot {
+      transition: r 180ms ease, fill-opacity 200ms ease;
+      pointer-events: none;
+    }
+
+    .node-delete-btn {
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity 150ms ease;
+    }
+
+    .node-group:hover .node-delete-btn,
+    .node-group:focus-within .node-delete-btn,
+    .node-delete-btn:hover {
+      opacity: 1;
+    }
+
+    .node-delete-btn:hover circle {
+      fill: rgba(251, 113, 133, 0.28);
+      stroke: rgba(251, 113, 133, 0.85);
+    }
+
+    /* Interactive Inspector Strip */
+    .inspector {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0.48rem 0.9rem;
+      border-radius: 13px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem 1.1rem;
+      min-height: 44px;
+      transition: border-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .inspector-main {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .inspector-code {
+      font-family: var(--font-mono);
+      font-size: clamp(0.72rem, 0.95vw, 0.82rem);
+      font-weight: 500;
+      padding: 0.2rem 0.54rem;
+      border-radius: 7px;
+      background: rgba(2, 6, 23, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .inspector-text {
+      font-size: clamp(0.73rem, 0.95vw, 0.82rem);
+      color: var(--text-secondary);
+      line-height: 1.35;
+      min-width: 180px;
+      flex: 1;
+    }
+
+    .inspector-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .inspector-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.36rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      padding: 0.18rem 0.48rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    /* Subtle Scroll Cue */
+    .scroll-cue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      user-select: none;
+    }
+
+    .scroll-cue svg {
+      width: 14px;
+      height: 14px;
+      animation: bobDown 2.2s ease-in-out infinite;
+    }
+
+    @keyframes bobDown {
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: 0.55;
+      }
+      50% {
+        transform: translateY(3px);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive adjustments for smaller laptops & phones */
+    @media (max-width: 767px) {
+      .hero {
+        padding: 0.5rem 0.65rem 0.4rem;
+        gap: 0.3rem;
+      }
+
+      .hero-subtitle,
+      .header-meta .hint-desktop {
+        display: none;
+      }
+
+      .editor-bar {
+        padding: 0.38rem 0.45rem;
+        gap: 0.38rem;
+        border-radius: 11px;
+      }
+
+      .mode-badge {
+        display: none;
+      }
+
+      .assignment-group {
+        flex: 1 1 100%;
+      }
+
+      .py-input {
+        font-size: 0.8rem;
+        padding: 0.32rem 0.46rem;
+      }
+
+      .py-input-name {
+        width: 94px;
+        flex: 0 0 94px;
+      }
+
+      .detected-type {
+        font-size: 0.7rem;
+        padding: 0.26rem 0.5rem;
+      }
+
+      .inspector {
+        padding: 0.42rem 0.68rem;
+        border-radius: 11px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+
+      .inspector-badges {
+        display: none;
+      }
+
+      .col-heading {
+        font-size: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .edge-flow,
+      .scroll-cue svg {
+        animation: none;
+      }
+    }
+  
+  /* ===== Explainer tutorial added below the original graph ===== */
+  .tutorial {
+    --t-bg: #0a0b12; --t-panel: #11131d; --t-line: rgba(255,255,255,.09);
+    --t-text: #f4f5fb; --t-muted: #a3a7ba; --t-accent: #a78bfa; --t-cyan: #67e8f9;
+    background: var(--t-bg); color: var(--t-text); font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    padding: clamp(24px, 5vw, 72px) 20px 80px; border-top: 1px solid var(--t-line);
+  }
+  .tutorial * { box-sizing: border-box; }
+  .t-wrap { max-width: 1080px; margin: 0 auto; }
+  .t-eyebrow { color: var(--t-cyan); font: 700 12px/1.5 ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
+  .t-heading { font-size: clamp(28px, 5vw, 54px); line-height: 1.08; letter-spacing: -.04em; margin: 12px 0 18px; }
+  .t-lead { color: var(--t-muted); font-size: clamp(15px, 2vw, 19px); line-height: 1.7; max-width: 760px; margin: 0 0 32px; }
+  .t-section { padding: clamp(42px, 7vw, 86px) 0; border-bottom: 1px solid var(--t-line); scroll-margin-top: 24px; }
+  .t-section:first-child { padding-top: 10px; }
+  .t-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; align-items: stretch; }
+  .t-card { border: 1px solid var(--t-line); border-radius: 20px; background: var(--t-panel); padding: clamp(18px,3vw,28px); min-width: 0; }
+  .t-card h3 { margin: 0 0 12px; font-size: 18px; }
+  .t-card p, .t-card li { color: var(--t-muted); line-height: 1.7; }
+  .t-card ul { padding-left: 20px; margin: 8px 0 0; }
+  .t-code { border: 1px solid var(--t-line); border-radius: 14px; padding: 16px; background: #080910; color: #d7ddff; font: 14px/1.85 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .t-highlight { color: var(--t-cyan); }
+  .t-visual { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:18px 0 8px; }
+  .t-chip { border:1px solid var(--t-line); background:#171a28; border-radius:12px; padding:12px 16px; color:#e9eaff; font:600 13px ui-monospace, monospace; }
+  .t-arrow { color:var(--t-accent); font-size:20px; font-weight:700; }
+  .t-callout { margin-top:18px; border-left:3px solid var(--t-accent); padding:12px 16px; background:rgba(167,139,250,.08); color:#c9cbe0; line-height:1.7; border-radius:0 12px 12px 0; }
+  .t-controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .t-input { min-width:0; flex:1; background:#080910; color:#f4f5fb; border:1px solid #303348; border-radius:10px; padding:11px 12px; font:14px ui-monospace,monospace; }
+  .t-btn { cursor:pointer; border:1px solid #45435e; color:#f7f6ff; background:#26233a; border-radius:10px; padding:10px 14px; font-weight:700; transition:.15s; }
+  .t-btn:hover { transform:translateY(-1px); border-color:var(--t-accent); }
+  .t-output { min-height:44px; margin-top:12px; padding:12px; border:1px dashed #41445a; border-radius:10px; color:#c9d0e8; font:13px/1.65 ui-monospace,monospace; overflow-wrap:anywhere; }
+  .t-type-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
+  .t-type { border:1px solid var(--t-line); background:#11131d; border-radius:14px; padding:14px; }
+  .t-type code { color:var(--t-cyan); font-size:13px; }
+  .t-type p { color:var(--t-muted); font-size:13px; line-height:1.55; margin:8px 0 0; }
+  .t-steps { counter-reset: steps; display:grid; gap:12px; }
+  .t-step { counter-increment:steps; display:flex; gap:14px; border:1px solid var(--t-line); border-radius:14px; padding:16px; background:#11131d; }
+  .t-step:before { content:counter(steps); flex:0 0 28px; height:28px; border-radius:9px; display:grid; place-items:center; background:#27223c; color:var(--t-accent); font-weight:800; }
+  .t-step p { margin:4px 0 0; color:var(--t-muted); line-height:1.65; }
+  .t-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .t-table th,.t-table td { border-bottom:1px solid var(--t-line); padding:12px 10px; text-align:left; vertical-align:top; }
+  .t-table th { color:#e6e7f5; }
+  .t-table td { color:var(--t-muted); }
+  .t-quiz { display:grid; gap:14px; }
+  .t-quiz-question { border:1px solid var(--t-line); background:#11131d; border-radius:16px; padding:18px; }
+  .t-quiz-question h3 { margin:0 0 12px; font-size:16px; }
+  .t-option { display:block; padding:9px 11px; border:1px solid #303348; border-radius:10px; margin:7px 0; color:#c7c9dc; cursor:pointer; }
+  .t-option input { margin-right:8px; accent-color:#a78bfa; }
+  .t-feedback { margin-top:10px; min-height:20px; color:var(--t-muted); font-size:13px; }
+  .t-footer { padding:38px 0 0; text-align:center; color:var(--t-muted); }
+  .t-footer a { color:var(--t-cyan); }
+  @media(max-width:760px) {
+    .t-grid { grid-template-columns:1fr; }
+    .t-type-grid { grid-template-columns:1fr 1fr; }
+    .tutorial { padding-left:15px; padding-right:15px; }
+  }
+  @media(max-width:440px) { .t-type-grid { grid-template-columns:1fr; } }
+
+  </style>
+</head>
+<body>
+  <section class="hero" aria-label="Interactive Python Variables and Data Types Graph">
+    <header class="hero-header">
+      <div class="title-group">
+        <h1 class="hero-title"><span>Python Variables &amp; Data Types</span></h1>
+        <p class="hero-subtitle">Names bind to objects in memory; objects hold values and types.</p>
+      </div>
+      <div class="header-meta">
+        <span class="hint-desktop">Click a variable node to rename, edit, or delete</span>
+        <button type="button" class="header-pill-btn reset-btn" id="reset-focus-btn">Clear focus</button>
+        <button type="button" class="header-pill-btn" id="reset-demo-btn" title="Restore initial Python example variables">Reset demo</button>
+      </div>
+    </header>
+
+    <div class="editor-shell">
+      <form class="editor-bar" id="var-form" novalidate autocomplete="off">
+        <span class="mode-badge" id="mode-badge">+ New</span>
+
+        <div class="assignment-group">
+          <input
+            type="text"
+            id="var-name-input"
+            class="py-input py-input-name"
+            placeholder="age"
+            aria-label="Python variable name"
+            spellcheck="false"
+          />
+          <span class="assign-op" aria-hidden="true">=</span>
+          <input
+            type="text"
+            id="var-val-input"
+            class="py-input py-input-val"
+            placeholder='25, "Tanzeela", True, None'
+            aria-label="Python variable value"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="detected-type" id="detected-type" data-type="auto" aria-live="polite" title="Automatically detected Python data type">
+          <span class="detected-type-label">type</span>
+          <span class="detected-type-value" id="detected-type-value">auto</span>
+        </div>
+
+        <div class="editor-actions">
+          <button type="submit" class="btn-primary" id="submit-btn">Add</button>
+          <button type="button" class="btn-danger hidden" id="delete-btn">Delete</button>
+          <button type="button" class="btn-ghost hidden" id="cancel-edit-btn">Cancel</button>
+        </div>
+      </form>
+      <div class="editor-error hidden" id="editor-error" role="alert"></div>
+    </div>
+
+    <main class="graph-stage">
+      <svg id="python-graph" role="img" aria-label="Interactive graph showing Python variable names connected to memory objects and data types"></svg>
+    </main>
+
+    <div class="inspector" id="inspector" aria-live="polite">
+      <div class="inspector-main">
+        <code class="inspector-code" id="inspector-code">count = 42; limit = 42</code>
+        <p class="inspector-text" id="inspector-text">
+          Create a variable above or click any node to inspect bindings, shared objects, and mutability.
+        </p>
+      </div>
+      <div class="inspector-badges" id="inspector-badges">
+        <span class="meta-pill">Names → References</span>
+        <span class="meta-pill">Objects → Value + Type</span>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-label="Scroll down to learn the theory">
+      <span>Scroll down to learn the theory</span>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 6l4 4 4-4" />
+      </svg>
+    </div>
+  </section>
+
+
+  <article class="tutorial" id="python-tutorial">
+    <div class="t-wrap">
+      <section class="t-section" id="lesson-start">
+        <div class="t-eyebrow">Python visual guide · Start here</div>
+        <h2 class="t-heading">Variables are names.<br><span class="t-highlight">Objects hold the data.</span></h2>
+        <p class="t-lead">Python code becomes easier when you picture what happens behind each assignment. A variable name is a label that refers to an object. That object has a value and a type.</p>
+        <div class="t-grid">
+          <div class="t-card">
+            <h3>What does a variable do?</h3>
+            <div class="t-code">student_name = "Ayesha"<br>score = 95</div>
+            <p>Python creates objects for the values, then binds the names <code>student_name</code> and <code>score</code> to them. A variable is not a box containing a value; it is a name bound to an object.</p>
+            <div class="t-visual"><span class="t-chip">student_name</span><span class="t-arrow">→</span><span class="t-chip">"Ayesha" · str</span></div>
+            <div class="t-visual"><span class="t-chip">score</span><span class="t-arrow">→</span><span class="t-chip">95 · int</span></div>
+          </div>
+          <div class="t-card">
+            <h3>Think of labels on objects</h3>
+            <p>Imagine name tags placed beside objects. The tag is the variable name, while the object is the actual value in memory. Multiple names can refer to the same object.</p>
+            <div class="t-visual"><span class="t-chip">first</span><span class="t-arrow">↘</span><span class="t-chip">42 · int</span><span class="t-arrow">↗</span><span class="t-chip">second</span></div>
+            <div class="t-callout"><strong>Remember:</strong> variable name → object → value and type. The arrow represents a reference/binding, not a copy by default.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="t-section" id="assignment">
+        <div class="t-eyebrow">01 · Assignment & reassignment</div>
+        <h2 class="t-heading">Assign a name.<br>Then reassign it.</h2>
+        <p class="t-lead">The equals sign (<code>=</code>) in Python means assignment—not a mathematical equality test. It binds the name on the left to the result/value on the right.</p>
+        <div class="t-grid">
+          <div class="t-card">
+            <h3>Follow the name</h3>
+            <div class="t-code" id="assign-code">points = 10</div>
+            <div class="t-visual"><span class="t-chip" id="assign-name">points</span><span class="t-arrow">→</span><span class="t-chip" id="assign-object">10 · int</span></div>
+            <div class="t-controls"><button class="t-btn" type="button" id="assign-next">Reassign to 25</button><button class="t-btn" type="button" id="assign-reset">Reset</button></div>
+            <div class="t-output" id="assign-output">The name points is currently bound to integer object 10.</div>
+          </div>
+          <div class="t-card">
+            <h3>Assignment is an expression of binding</h3>
+            <div class="t-steps">
+              <div class="t-step"><div><strong>Evaluate the right side</strong><p>Python first evaluates the value/expression on the right of the assignment.</p></div></div>
+              <div class="t-step"><div><strong>Bind the left name</strong><p>The name is made to refer to the resulting object.</p></div></div>
+              <div class="t-step"><div><strong>Reassignment</strong><p>Assigning a different value makes the name refer to a different object; it does not change the old object itself.</p></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="t-section" id="naming">
+        <div class="t-eyebrow">02 · Naming rules</div>
+        <h2 class="t-heading">Names should be valid<br>and meaningful.</h2>
+        <p class="t-lead">Choose names that describe the data. Python identifiers are case-sensitive and cannot begin with a digit or contain spaces.</p>
+        <div class="t-grid">
+          <div class="t-card">
+            <h3>Try a variable name</h3>
+            <div class="t-controls"><input class="t-input" id="name-check-input" placeholder="e.g. total_marks" aria-label="Enter a Python variable name"><button class="t-btn" id="name-check-btn" type="button">Check name</button></div>
+            <div class="t-output" id="name-check-output" aria-live="polite">Type a name to check its rules.</div>
+          </div>
+          <div class="t-card">
+            <h3>Quick rules</h3>
+            <ul><li>May contain letters, digits, and underscores.</li><li>Cannot start with a digit.</li><li>No spaces or hyphens.</li><li>Case matters: <code>age</code> and <code>Age</code> are different names.</li><li>Keywords such as <code>class</code>, <code>if</code>, and <code>True</code> cannot be used as ordinary variable names.</li></ul>
+            <div class="t-code">user_age = 19  # good<br>userAge = 19   # valid<br>2users = 19    # invalid<br>user-age = 19  # invalid</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="t-section" id="types">
+        <div class="t-eyebrow">03 · Data types</div>
+        <h2 class="t-heading">Different kinds of<br>data, different behavior.</h2>
+        <p class="t-lead">A type tells Python what kind of object it is and which operations make sense. Use <code>type(value)</code> to inspect an object’s type.</p>
+        <div class="t-type-grid">
+          <div class="t-type"><code>int</code><div class="t-code">count = 7</div><p>Whole numbers, positive, negative, or zero.</p></div>
+          <div class="t-type"><code>float</code><div class="t-code">price = 2.75</div><p>Numbers with a fractional component.</p></div>
+          <div class="t-type"><code>str</code><div class="t-code">name = "Ali"</div><p>Text inside quotes; strings are sequences of characters.</p></div>
+          <div class="t-type"><code>bool</code><div class="t-code">active = True</div><p>Logical values: <code>True</code> or <code>False</code>.</p></div>
+          <div class="t-type"><code>list</code><div class="t-code">items = [2, "x"]</div><p>Ordered collection; can be changed and can contain mixed types.</p></div>
+          <div class="t-type"><code>tuple</code><div class="t-code">point = (3, 4)</div><p>Ordered collection that cannot be reassigned item-by-item.</p></div>
+          <div class="t-type"><code>dict</code><div class="t-code">user = {"name":"Ali"}</div><p>Stores key–value pairs for lookups by key.</p></div>
+          <div class="t-type"><code>set</code><div class="t-code">tags = {"a", "b"}</div><p>Collection of unique elements; no duplicate values.</p></div>
+          <div class="t-type"><code>NoneType</code><div class="t-code">result = None</div><p>Represents the absence of a value or a placeholder result.</p></div>
+        </div>
+        <div class="t-card" style="margin-top:18px">
+          <h3>Type detective — inspect your value</h3>
+          <div class="t-controls"><input class="t-input" id="type-input" value='"hello"' aria-label="Python value literal"><button class="t-btn" type="button" id="type-check-btn">Inspect type</button></div>
+          <div class="t-output" id="type-output">Try <code>12</code>, <code>3.14</code>, <code>"text"</code>, <code>False</code>, <code>[1,2]</code>, <code>None</code>.</div>
+          <p>Enter a Python literal. This small demo recognizes common literal forms only—it does not execute Python code.</p>
+        </div>
+      </section>
+
+      <section class="t-section" id="mutable">
+        <div class="t-eyebrow">04 · Mutable vs immutable</div>
+        <h2 class="t-heading">Can the object change<br>without rebinding?</h2>
+        <p class="t-lead">Mutable objects can be changed in place. Immutable objects cannot have their contents changed after creation; operations that appear to change them create/refer to a new object instead.</p>
+        <div class="t-grid">
+          <div class="t-card">
+            <h3>Mutable: list</h3>
+            <div class="t-code" id="mut-code">items = [1, 2]</div>
+            <div class="t-visual"><span class="t-chip">items</span><span class="t-arrow">→</span><span class="t-chip" id="mut-object">[1, 2]</span></div>
+            <button class="t-btn" id="mut-add" type="button">Append 3</button><button class="t-btn" id="mut-reset" type="button">Reset list</button>
+            <div class="t-output" id="mut-output">Appending changes the same list object.</div>
+          </div>
+          <div class="t-card">
+            <h3>Immutable: string</h3>
+            <div class="t-code" id="imm-code">word = "cat"</div>
+            <div class="t-visual"><span class="t-chip">word</span><span class="t-arrow">→</span><span class="t-chip" id="imm-object">"cat"</span></div>
+            <button class="t-btn" id="imm-next" type="button">Reassign to "dog"</button><button class="t-btn" id="imm-reset" type="button">Reset string</button>
+            <div class="t-output" id="imm-output">A new string is assigned; the original string itself is not modified.</div>
+          </div>
+        </div>
+        <div class="t-callout">This distinction matters when two names refer to the same list: editing that list is visible through both names. Rebinding one name alone does not rebind the other.</div>
+      </section>
+
+      <section class="t-section" id="casting">
+        <div class="t-eyebrow">05 · Type conversion</div>
+        <h2 class="t-heading">Convert deliberately.</h2>
+        <p class="t-lead">Type conversion (casting) creates or returns a value of another type when conversion is supported. Conversion is not always the same as formatting or parsing.</p>
+        <div class="t-grid">
+          <div class="t-card">
+            <h3>Common conversions</h3>
+            <table class="t-table"><thead><tr><th>Expression</th><th>Result</th></tr></thead><tbody><tr><td><code>int("12")</code></td><td>12</td></tr><tr><td><code>float("3.5")</code></td><td>3.5</td></tr><tr><td><code>str(25)</code></td><td>"25"</td></tr><tr><td><code>list("abc")</code></td><td>['a', 'b', 'c']</td></tr><tr><td><code>bool(0)</code></td><td>False</td></tr><tr><td><code>bool("False")</code></td><td>True — non-empty text is truthy</td></tr></tbody></table>
+          </div>
+          <div class="t-card">
+            <h3>Try a conversion</h3>
+            <div class="t-controls"><input class="t-input" id="cast-input" placeholder="value (e.g. 12 or '12')"><select class="t-input" id="cast-select" aria-label="Choose conversion"><option value="int">int()</option><option value="float">float()</option><option value="str">str()</option><option value="bool">bool()</option></select><button class="t-btn" id="cast-btn" type="button">Convert</button></div>
+            <div class="t-output" id="cast-output">This calculator supports a limited set of safe conversions. It does not run arbitrary code.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="t-section" id="input">
+        <div class="t-eyebrow">06 · User input</div>
+        <h2 class="t-heading">Input arrives as text.</h2>
+        <p class="t-lead">The built-in <code>input()</code> function reads what a user types and returns a string (<code>str</code>), even if the text looks like a number. Convert it if numeric calculations are intended.</p>
+        <div class="t-grid">
+          <div class="t-card">
+            <h3>Without conversion</h3>
+            <div class="t-code">age = input("Age? ")<br># age is a str</div>
+            <div class="t-controls"><input class="t-input" id="input-demo" placeholder="Enter a number or any text"><button class="t-btn" id="input-btn" type="button">Simulate input</button></div>
+            <div class="t-output" id="input-output">Type something and see the resulting type.</div>
+          </div>
+          <div class="t-card">
+            <h3>With conversion</h3>
+            <div class="t-code">age = int(input("Age? "))<br>next_year = age + 1</div>
+            <p>For numeric input, validate and convert the text (for example, with <code>int()</code> or <code>float()</code>). If it cannot be converted, Python raises a <code>ValueError</code>.</p>
+            <div class="t-callout">In a real program, prompt text and error handling make input clearer. Never assume user-entered text is automatically numeric.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="t-section" id="practice">
+        <div class="t-eyebrow">07 · Practice lab</div>
+        <h2 class="t-heading">Try it. Predict it.<br>Then check.</h2>
+        <p class="t-lead">These short challenges help you apply the ideas. Select an answer and use Check. The practice lab is independent of the original graph.</p>
+        <div class="t-quiz" id="t-quiz">
+          <div class="t-quiz-question" data-answer="b">
+            <h3>Challenge 1 — What type is <code>7.0</code>?</h3>
+            <label class="t-option"><input type="radio" name="q1" value="a"> int</label><label class="t-option"><input type="radio" name="q1" value="b"> float</label><label class="t-option"><input type="radio" name="q1" value="c"> str</label><div class="t-feedback"></div>
+          </div>
+          <div class="t-quiz-question" data-answer="c">
+            <h3>Challenge 2 — Which name is valid?</h3>
+            <label class="t-option"><input type="radio" name="q2" value="a"> 2score</label><label class="t-option"><input type="radio" name="q2" value="b"> user-name</label><label class="t-option"><input type="radio" name="q2" value="c"> user_score</label><div class="t-feedback"></div>
+          </div>
+          <div class="t-quiz-question" data-answer="a">
+            <h3>Challenge 3 — What is the result of <code>bool("False")</code>?</h3>
+            <label class="t-option"><input type="radio" name="q3" value="a"> True</label><label class="t-option"><input type="radio" name="q3" value="b"> False</label><label class="t-option"><input type="radio" name="q3" value="c"> Error</label><div class="t-feedback"></div>
+          </div>
+          <div class="t-quiz-question" data-answer="b">
+            <h3>Challenge 4 — Which collection is mutable?</h3>
+            <label class="t-option"><input type="radio" name="q4" value="a"> tuple</label><label class="t-option"><input type="radio" name="q4" value="b"> list</label><label class="t-option"><input type="radio" name="q4" value="c"> str</label><div class="t-feedback"></div>
+          </div>
+          <div class="t-quiz-question" data-answer="c">
+            <h3>Challenge 5 — What type does <code>input()</code> return?</h3>
+            <label class="t-option"><input type="radio" name="q5" value="a"> int</label><label class="t-option"><input type="radio" name="q5" value="b"> depends on input</label><label class="t-option"><input type="radio" name="q5" value="c"> str</label><div class="t-feedback"></div>
+          </div>
+          <button class="t-btn" id="quiz-check" type="button">Check all answers</button>
+          <div class="t-output" id="quiz-score" aria-live="polite">Score appears here after checking.</div>
+        </div>
+      </section>
+
+      <section class="t-section" id="recap">
+        <div class="t-eyebrow">08 · Quick recap</div>
+        <h2 class="t-heading">Keep these ideas<br>in your toolkit.</h2>
+        <div class="t-grid">
+          <div class="t-card"><h3>Core concepts</h3><ul><li>A variable name refers to an object.</li><li>Objects have values and types.</li><li><code>=</code> binds/rebinds a name.</li><li>Use descriptive, valid identifiers.</li><li>Mutable objects can change in place; immutable objects cannot.</li><li>Use conversions when the type you have differs from the type you need.</li><li><code>input()</code> returns text.</li></ul></div>
+          <div class="t-card"><h3>Mini cheat sheet</h3><div class="t-code">type(42)       # int<br>type(2.5)      # float<br>type("Hi")     # str<br>type(False)     # bool<br>type([1, 2])   # list<br>type((1, 2))   # tuple<br>type({"a": 1})  # dict<br>type({1, 2})    # set<br>type(None)      # NoneType</div><p>Revisit the graph above and click variable nodes to see names, objects, and data types connected.</p></div>
+        </div>
+        <div class="t-footer"><a href="#lesson-start">Back to the beginning ↑</a><p>Explore the graph, scroll through the lessons, and test your understanding.</p></div>
+      </section>
+    </div>
+  </article>
+
+
+  
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    // Reassignment visualization
+    let assignmentValue = 10;
+    const drawAssignment = () => {
+      $("assign-code").textContent = `points = ${assignmentValue}`;
+      $("assign-object").textContent = `${assignmentValue} · int`;
+      $("assign-output").textContent = `The name points is currently bound to integer object ${assignmentValue}.`;
+      $("assign-next").textContent = assignmentValue === 10 ? "Reassign to 25" : "Reassign to 10";
+    };
+    $("assign-next").addEventListener("click", () => { assignmentValue = assignmentValue === 10 ? 25 : 10; drawAssignment(); });
+    $("assign-reset").addEventListener("click", () => { assignmentValue = 10; drawAssignment(); });
+
+    // Python-ish identifier checker (keywords are checked without executing code)
+    const keywords = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+    $("name-check-btn").addEventListener("click", () => {
+      const n = $("name-check-input").value.trim();
+      const valid = /^[A-Za-z_][A-Za-z0-9_]*$/.test(n) && !keywords.has(n);
+      $("name-check-output").textContent = !n ? "Enter a name first." : valid ? `✓ ${n} is a valid identifier. Consider choosing a descriptive name.` : `✗ ${n} is not a valid ordinary variable name. Check the rules above.`;
+    });
+
+    // Safe literal type checker. It classifies literal-looking strings only.
+    function detectLiteralType(v) {
+      const s = v.trim();
+      if (s === "None") return "NoneType";
+      if (s === "True" || s === "False") return "bool";
+      if (/^[+-]?\d+$/.test(s)) return "int";
+      if (/^[+-]?(?:(?:\d+\.\d*|\.\d+)(?:[eE][+-]?\d+)?|\d+[eE][+-]?\d+)$/.test(s)) return "float";
+      if (/^(['"]).*\1$/.test(s)) return "str";
+      if (/^\[.*\]$/.test(s)) return "list";
+      if (/^\(.*\)$/.test(s)) return "tuple";
+      if (/^\{.*\}$/.test(s)) return s === "{}" ? "dict" : s.includes(":") ? "dict" : "set";
+      return "not recognized as a simple literal";
+    }
+    $("type-check-btn").addEventListener("click", () => {
+      const value = $("type-input").value;
+      const kind = detectLiteralType(value);
+      $("type-output").textContent = `Literal: ${value || "(empty)"}  →  Type: ${kind}. (Limited literal recognition; no code is executed.)`;
+    });
+
+    // Mutable list example
+    let mutableItems = [1, 2];
+    function drawMutable() {
+      $("mut-code").textContent = `items = [${mutableItems.join(", ")}]`;
+      $("mut-object").textContent = `[${mutableItems.join(", ")}]`;
+      $("mut-output").textContent = `The same list is updated in place. Current list length: ${mutableItems.length}.`;
+    }
+    $("mut-add").addEventListener("click", () => { if (mutableItems.length < 10) mutableItems.push(mutableItems.length + 1); drawMutable(); });
+    $("mut-reset").addEventListener("click", () => { mutableItems = [1, 2]; drawMutable(); });
+
+    // Immutable string reassignment demo
+    let word = "cat";
+    function drawWord() {
+      $("imm-code").textContent = `word = "${word}"`;
+      $("imm-object").textContent = `"${word}"`;
+      $("imm-output").textContent = `word is now bound to the immutable string "${word}". The string's characters are not changed in place.`;
+      $("imm-next").textContent = word === "cat" ? 'Reassign to "dog"' : 'Reassign to "cat"';
+    }
+    $("imm-next").addEventListener("click", () => { word = word === "cat" ? "dog" : "cat"; drawWord(); });
+    $("imm-reset").addEventListener("click", () => { word = "cat"; drawWord(); });
+
+    // Safe casting demo: parse only a simple input format; no eval/exec.
+    function parseSafeValue(raw) {
+      const s = raw.trim();
+      if (s === "True") return {value:true, type:"bool"};
+      if (s === "False") return {value:false, type:"bool"};
+      if (s === "None") return {value:null, type:"NoneType"};
+      if (/^[+-]?\d+$/.test(s)) return {value:Number(s), type:"int"};
+      if (/^[+-]?(?:\d+\.\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(s)) return {value:Number(s), type:"float"};
+      if (/^(['"]).*\1$/.test(s)) return {value:s.slice(1,-1), type:"str"};
+      return {value:s, type:"str"};
+    }
+    $("cast-btn").addEventListener("click", () => {
+      const raw = $("cast-input").value, conversion = $("cast-select").value;
+      const parsed = parseSafeValue(raw);
+      let result, resultType;
+      try {
+        if (conversion === "int") {
+          const v = parsed.value;
+          if (typeof v === "boolean") result = v ? 1 : 0;
+          else if (typeof v === "number" && Number.isFinite(v)) result = Math.trunc(v);
+          else if (typeof v === "string" && /^[+-]?\d+$/.test(v.trim())) result = Number(v.trim());
+          else throw new Error("ValueError: invalid literal for int()");
+          resultType = "int";
+        } else if (conversion === "float") {
+          const v = parsed.value;
+          if (typeof v === "number" && Number.isFinite(v)) result = v;
+          else if (typeof v === "boolean") result = v ? 1.0 : 0.0;
+          else if (typeof v === "string" && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.trim())) result = Number(v.trim());
+          else throw new Error("ValueError: could not convert value to float");
+          resultType = "float";
+        } else if (conversion === "str") {
+          result = parsed.type === "str" ? parsed.value : String(parsed.value);
+          resultType = "str";
+        } else {
+          const v = parsed.value;
+          result = !(v === null || v === false || v === 0 || v === "" || (Array.isArray(v) && v.length === 0));
+          if (typeof v === "string") result = v.length > 0;
+          resultType = "bool";
+        }
+        $("cast-output").textContent = `${conversion}(${raw}) → ${String(result)}  ·  result type: ${resultType}`;
+      } catch (e) { $("cast-output").textContent = e.message; }
+    });
+
+    // Simulated input: Python input() always returns a string.
+    $("input-btn").addEventListener("click", () => {
+      const typed = $("input-demo").value;
+      $("input-output").textContent = `Python-like result: "${typed}"  ·  type: str. Even if you entered digits, input() returns text.`;
+    });
+
+    // Quiz checks
+    $("quiz-check").addEventListener("click", () => {
+      const questions = [...document.querySelectorAll(".t-quiz-question")];
+      let score = 0;
+      questions.forEach((q, i) => {
+        const selected = q.querySelector(`input[name="q${i+1}"]:checked`);
+        const feedback = q.querySelector(".t-feedback");
+        if (selected && selected.value === q.dataset.answer) { score++; feedback.textContent = "✓ Correct!"; feedback.style.color = "#65e6a5"; }
+        else { feedback.textContent = `✗ Not quite. Correct option: ${q.dataset.answer.toUpperCase()}.`; feedback.style.color = "#ff9aab"; }
+      });
+      $("quiz-score").textContent = `Your score: ${score} / ${questions.length}. Review the explanations above, then try again.`;
+    });
+  })();
+  </script>
+
+
+  <script>
+    (() => {
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const svg = document.getElementById("python-graph");
+      const inspector = document.getElementById("inspector");
+      const inspectorCode = document.getElementById("inspector-code");
+      const inspectorText = document.getElementById("inspector-text");
+      const inspectorBadges = document.getElementById("inspector-badges");
+      const resetFocusBtn = document.getElementById("reset-focus-btn");
+      const resetDemoBtn = document.getElementById("reset-demo-btn");
+
+      const form = document.getElementById("var-form");
+      const modeBadge = document.getElementById("mode-badge");
+      const nameInput = document.getElementById("var-name-input");
+      const valInput = document.getElementById("var-val-input");
+      const detectedTypeBox = document.getElementById("detected-type");
+      const detectedTypeValue = document.getElementById("detected-type-value");
+      const submitBtn = document.getElementById("submit-btn");
+      const deleteBtn = document.getElementById("delete-btn");
+      const cancelEditBtn = document.getElementById("cancel-edit-btn");
+      const editorError = document.getElementById("editor-error");
+
+      const TYPE_COLORS = {
+        int: "#38bdf8",
+        float: "#818cf8",
+        str: "#34d399",
+        bool: "#fbbf24",
+        list: "#fb7185",
+        NoneType: "#c084fc"
+      };
+
+      const PYTHON_KEYWORDS = new Set([
+        "False", "None", "True", "and", "as", "assert", "async", "await",
+        "break", "class", "continue", "def", "del", "elif", "else", "except",
+        "finally", "for", "from", "global", "if", "import", "in", "is",
+        "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try",
+        "while", "with", "yield"
+      ]);
+
+      const TYPE_DEFS = [
+        {
+          id: "type:int",
+          type: "int",
+          label: "int",
+          tag: "numeric • immutable",
+          accent: TYPE_COLORS.int,
+          code: "<class 'int'>",
+          desc: "Arbitrary-precision integer type. Because <strong>int</strong> objects are immutable, arithmetic rebinds names to new objects instead of mutating values.",
+          badges: ["arbitrary precision", "immutable"]
+        },
+        {
+          id: "type:float",
+          type: "float",
+          label: "float",
+          tag: "decimal • immutable",
+          accent: TYPE_COLORS.float,
+          code: "<class 'float'>",
+          desc: "64-bit IEEE 754 floating-point type for fractional numbers and scientific notation.",
+          badges: ["IEEE 754 binary64", "immutable"]
+        },
+        {
+          id: "type:str",
+          type: "str",
+          label: "str",
+          tag: "text • immutable",
+          accent: TYPE_COLORS.str,
+          code: "<class 'str'>",
+          desc: "Immutable sequence of Unicode code points used for text data.",
+          badges: ["sequence", "immutable"]
+        },
+        {
+          id: "type:bool",
+          type: "bool",
+          label: "bool",
+          tag: "logic • subclass of int",
+          accent: TYPE_COLORS.bool,
+          code: "issubclass(bool, int)  # True",
+          desc: "Boolean type with exactly two singleton instances: <strong>True</strong> (1) and <strong>False</strong> (0). Inherits directly from <strong>int</strong>.",
+          badges: ["subclass of int", "immutable"]
+        },
+        {
+          id: "type:list",
+          type: "list",
+          label: "list",
+          tag: "sequence • mutable",
+          accent: TYPE_COLORS.list,
+          code: "<class 'list'>",
+          desc: "Ordered, <strong>mutable</strong> container of object references. Every slot holds a pointer to an object in memory.",
+          badges: ["ordered", "mutable"]
+        },
+        {
+          id: "type:NoneType",
+          type: "NoneType",
+          label: "NoneType",
+          tag: "singleton • immutable",
+          accent: TYPE_COLORS.NoneType,
+          code: "<class 'NoneType'>  # type(None)",
+          desc: "Singleton type with exactly one instance: <strong>None</strong>. Represents the intentional absence of a value.",
+          badges: ["singleton", "immutable"]
+        }
+      ];
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function formatPythonString(text) {
+        return '"' + text
+          .replace(/\\/g, "\\\\")
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, "\\n")
+          .replace(/\r/g, "\\r")
+          .replace(/\t/g, "\\t") + '"';
+      }
+
+      function truncate(str, max) {
+        return str.length > max ? str.slice(0, max - 1) + "…" : str;
+      }
+
+      function memAddress(seedStr) {
+        let h = 0x10a4;
+        for (let i = 0; i < seedStr.length; i++) {
+          h = ((h << 5) - h + seedStr.charCodeAt(i)) & 0xffff;
+        }
+        return "0x" + h.toString(16).padStart(4, "0");
+      }
+
+      // ---- Safe Python Literal Validator & Parser (NO eval) ----
+
+      function validateVarName(raw, editingVarId) {
+        const name = raw.trim();
+        if (!name) {
+          return { ok: false, field: "name", message: "Enter a variable name (e.g., <code>age</code> or <code>is_active</code>)." };
+        }
+        if (/^\d/.test(name)) {
+          return { ok: false, field: "name", message: `<code>${escapeHtml(name)}</code> is invalid: Python variable names cannot start with a digit.` };
+        }
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
+          return { ok: false, field: "name", message: `<code>${escapeHtml(name)}</code> is invalid: use only letters, digits, and underscores (no spaces or hyphens).` };
+        }
+        if (PYTHON_KEYWORDS.has(name)) {
+          return { ok: false, field: "name", message: `<code>${escapeHtml(name)}</code> is a reserved Python keyword and cannot be a variable name.` };
+        }
+        const duplicate = variables.find((v) => v.name === name && v.id !== editingVarId);
+        if (duplicate) {
+          return { ok: false, field: "name", message: `Variable <code>${escapeHtml(name)}</code> already exists. Click it in the graph to edit, or choose a new name.` };
+        }
+        return { ok: true, name };
+      }
+
+      function parseIntLiteral(raw) {
+        const s = raw.trim();
+        let bigVal = null;
+
+        if (/^[+-]?(?:0(?:_?0)*|[1-9](?:_?\d)*)$/.test(s)) {
+          bigVal = BigInt(s.replace(/_/g, ""));
+        } else if (/^[+-]?0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*$/.test(s)) {
+          const sign = s[0] === "-" ? -1n : 1n;
+          const body = s.replace(/^[+-]/, "").replace(/_/g, "");
+          bigVal = sign * BigInt(body);
+        } else if (/^[+-]?0[bB][01](?:_?[01])*$/.test(s)) {
+          const sign = s[0] === "-" ? -1n : 1n;
+          const body = s.replace(/^[+-]/, "").replace(/_/g, "");
+          bigVal = sign * BigInt(body);
+        } else if (/^[+-]?0[oO][0-7](?:_?[0-7])*$/.test(s)) {
+          const sign = s[0] === "-" ? -1n : 1n;
+          const body = s.replace(/^[+-]/, "").replace(/_/g, "");
+          bigVal = sign * BigInt(body);
+        } else {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is not a valid Python integer (try <code>25</code>, <code>-7</code>, or <code>1_000</code>).` };
+        }
+
+        const interned = bigVal >= -5n && bigVal <= 256n;
+        return {
+          ok: true,
+          type: "int",
+          rawInput: s,
+          display: bigVal.toString(),
+          bigVal,
+          interned,
+          internKey: interned ? `int:${bigVal.toString()}` : null
+        };
+      }
+
+      function parseFloatLiteral(raw) {
+        const s = raw.trim();
+        const floatRe = /^[+-]?(?:(?:\d(?:_?\d)*\.\d(?:_?\d)*|\d(?:_?\d)*\.|\.\d(?:_?\d)*)(?:[eE][+-]?\d(?:_?\d)*)?|\d(?:_?\d)*[eE][+-]?\d(?:_?\d)*)$/;
+        if (!floatRe.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is not a valid Python float (try <code>3.14</code>, <code>-0.25</code>, or <code>1.5e2</code>).` };
+        }
+        const clean = s.replace(/_/g, "");
+        const num = Number(clean);
+        if (!Number.isFinite(num)) {
+          return { ok: false, message: "Float magnitude exceeds 64-bit IEEE 754 finite range." };
+        }
+        // Preserve clean Python float formatting (e.g., 20. -> 20.0, .5 -> 0.5)
+        let display = clean.replace(/^\+/, "");
+        if (display.startsWith(".")) display = "0" + display;
+        if (display.startsWith("-.")) display = "-0" + display.slice(1);
+        if (display.endsWith(".")) display = display + "0";
+        if (!display.includes(".") && !/[eE]/.test(display)) display += ".0";
+        return {
+          ok: true,
+          type: "float",
+          rawInput: s,
+          display,
+          numVal: num,
+          interned: false,
+          internKey: null
+        };
+      }
+
+      function parseQuotedString(s, isRaw = false) {
+        const tripleQuote = s.startsWith('"""') ? '"""' : s.startsWith("'''") ? "'''" : null;
+        if (tripleQuote) {
+          let out = "";
+          let i = 3;
+          while (i < s.length) {
+            if (!isRaw && s[i] === "\\") {
+              if (i + 1 >= s.length) {
+                return { ok: false, incomplete: true, message: "Incomplete escape sequence at the end of string." };
+              }
+              const next = s[i + 1];
+              if (next === "n") out += "\n";
+              else if (next === "t") out += "\t";
+              else if (next === "r") out += "\r";
+              else if (next === "\\" || next === '"' || next === "'") out += next;
+              else out += "\\" + next;
+              i += 2;
+              continue;
+            }
+            if (s.slice(i, i + 3) === tripleQuote) {
+              if (i + 3 === s.length) {
+                return { ok: true, value: out };
+              }
+              return { ok: false, message: `Unexpected text after closing ${tripleQuote} in string literal.` };
+            }
+            out += s[i];
+            i++;
+          }
+          return { ok: false, incomplete: true, message: `Unclosed ${tripleQuote} quote in string literal.` };
+        }
+
+        const quote = s[0];
+        let out = "";
+        let i = 1;
+        while (i < s.length) {
+          const ch = s[i];
+          if (ch === "\\") {
+            if (i + 1 >= s.length) {
+              return { ok: false, incomplete: true, message: "Incomplete escape sequence at the end of string." };
+            }
+            const next = s[i + 1];
+            if (isRaw) {
+              if (next === quote || next === "\\") out += "\\" + next;
+              else out += "\\" + next;
+              i += 2;
+              continue;
+            }
+            if (next === "n") out += "\n";
+            else if (next === "t") out += "\t";
+            else if (next === "r") out += "\r";
+            else if (next === "\\" || next === '"' || next === "'") out += next;
+            else out += "\\" + next;
+            i += 2;
+            continue;
+          }
+          if (ch === quote) {
+            if (i === s.length - 1) {
+              return { ok: true, value: out };
+            }
+            const rest = s.slice(i + 1);
+            const hasMoreQuote = rest.includes(quote);
+            return {
+              ok: false,
+              message: hasMoreQuote
+                ? `Unescaped ${quote} inside string literal—escape it as <code>\\${quote}</code> or switch outer quotes.`
+                : `Unexpected text <code>${escapeHtml(rest.trim())}</code> after closing ${quote} quote.`
+            };
+          }
+          out += ch;
+          i++;
+        }
+        return { ok: false, incomplete: true, message: `Unclosed ${quote} quote—add a closing ${quote} at the end (e.g., <code>${quote}Tanzeela${quote}</code>).` };
+      }
+
+      function parseStrLiteral(raw) {
+        const trimmed = raw.trim();
+        const isRaw = (trimmed[0] === "r" || trimmed[0] === "R") && (trimmed[1] === '"' || trimmed[1] === "'");
+        const body = isRaw ? trimmed.slice(1) : trimmed;
+        const parsed = parseQuotedString(body, isRaw);
+        if (!parsed.ok) return parsed;
+        const textVal = parsed.value;
+        const display = formatPythonString(textVal);
+        const interned = /^[A-Za-z0-9_]{1,20}$/.test(textVal);
+        return {
+          ok: true,
+          type: "str",
+          rawInput: raw,
+          textVal,
+          display,
+          interned,
+          internKey: interned ? `str:${textVal}` : null
+        };
+      }
+
+      function parseBoolLiteral(raw) {
+        const s = raw.trim();
+        return {
+          ok: true,
+          type: "bool",
+          rawInput: s,
+          display: s,
+          boolVal: s === "True",
+          interned: true,
+          internKey: `bool:${s}`
+        };
+      }
+
+      function parseNoneLiteral(raw) {
+        return {
+          ok: true,
+          type: "NoneType",
+          rawInput: raw.trim(),
+          display: "None",
+          interned: true,
+          internKey: "none:None"
+        };
+      }
+
+      function tokenizeAndParseList(raw, nestingDepth = 0) {
+        const s = raw.trim();
+        if (nestingDepth > 8) {
+          return { ok: false, message: "List nesting depth exceeds the visualizer limit (8 levels)." };
+        }
+        if (!s.startsWith("[")) {
+          return { ok: false, message: 'Missing opening <code>[</code> for list literal (e.g., <code>[1, 2, 3]</code>).' };
+        }
+        if (!s.endsWith("]")) {
+          return { ok: false, incomplete: true, message: 'Unclosed <code>[</code>—add a closing <code>]</code> at the end (e.g., <code>[1, 2, 3]</code>).' };
+        }
+
+        const inner = s.slice(1, -1).trim();
+        if (!inner) {
+          return {
+            ok: true,
+            type: "list",
+            rawInput: s,
+            elements: [],
+            display: "[]",
+            interned: false,
+            internKey: null
+          };
+        }
+
+        // Split top-level comma-separated elements respecting quotes & nested brackets
+        const parts = [];
+        let cur = "";
+        let inQuote = null;
+        let escaped = false;
+        let depth = 0;
+
+        for (let i = 0; i < inner.length; i++) {
+          const ch = inner[i];
+          if (escaped) {
+            cur += ch;
+            escaped = false;
+            continue;
+          }
+          if (inQuote) {
+            cur += ch;
+            if (ch === "\\") {
+              escaped = true;
+            } else if (ch === inQuote) {
+              inQuote = null;
+            }
+            continue;
+          }
+          if (ch === '"' || ch === "'") {
+            inQuote = ch;
+            cur += ch;
+            continue;
+          }
+          if (ch === "[") {
+            depth++;
+            cur += ch;
+            continue;
+          }
+          if (ch === "]") {
+            depth--;
+            if (depth < 0) return { ok: false, message: "Unexpected closing <code>]</code> inside list." };
+            cur += ch;
+            continue;
+          }
+          if (ch === "," && depth === 0) {
+            if (!cur.trim()) {
+              return { ok: false, message: "Unexpected empty item before comma in list." };
+            }
+            parts.push(cur.trim());
+            cur = "";
+            continue;
+          }
+          cur += ch;
+        }
+
+        if (inQuote) return { ok: false, incomplete: true, message: `Unclosed ${inQuote} quote inside list.` };
+        if (depth !== 0) return { ok: false, incomplete: true, message: "Unclosed nested <code>[</code> inside list." };
+        if (cur.trim()) {
+          parts.push(cur.trim());
+        }
+
+        const elements = [];
+        for (const token of parts) {
+          const parsedItem = parseAutoPythonLiteral(token, nestingDepth + 1);
+          if (!parsedItem.ok) {
+            return {
+              ok: false,
+              incomplete: parsedItem.incomplete,
+              message: `Invalid list element <code>${escapeHtml(token)}</code>: ${parsedItem.message}`
+            };
+          }
+          elements.push(parsedItem);
+        }
+
+        const display = "[" + elements.map((e) => e.display).join(", ") + "]";
+        return {
+          ok: true,
+          type: "list",
+          rawInput: s,
+          elements,
+          display,
+          interned: false,
+          internKey: null
+        };
+      }
+
+      function parseAutoPythonLiteral(raw, nestingDepth = 0) {
+        const s = raw.trim();
+        if (!s) {
+          return {
+            ok: false,
+            empty: true,
+            message: 'Enter a Python value (e.g., <code>25</code>, <code>3.14</code>, <code>"Tanzeela"</code>, <code>True</code>, <code>[1, 2, 3]</code>, or <code>None</code>).'
+          };
+        }
+
+        // 1. None -> NoneType
+        if (s === "None") return parseNoneLiteral(s);
+        if (/^none$/i.test(s)) {
+          return { ok: false, message: `Python's null literal is capitalized: write <code>None</code> instead of <code>${escapeHtml(s)}</code>.` };
+        }
+        if (/^(null|nil|undefined)$/i.test(s)) {
+          return { ok: false, message: `Python uses <code>None</code> instead of <code>${escapeHtml(s)}</code>.` };
+        }
+
+        // 2. True / False -> bool
+        if (s === "True" || s === "False") return parseBoolLiteral(s);
+        if (/^(true|false)$/i.test(s)) {
+          const fixed = s.toLowerCase() === "true" ? "True" : "False";
+          return { ok: false, message: `Python booleans are capitalized: write <code>${fixed}</code> instead of <code>${escapeHtml(s)}</code>.` };
+        }
+
+        // 3. Quoted string literal -> str
+        if (s[0] === '"' || s[0] === "'") {
+          return parseStrLiteral(s);
+        }
+        if ((s[0] === "r" || s[0] === "R") && (s[1] === '"' || s[1] === "'")) {
+          return parseStrLiteral(s);
+        }
+        if (/^[fF]["']/.test(s)) {
+          return { ok: false, message: 'f-strings are evaluated expressions, not plain literals. Enter a quoted string like <code>"Tanzeela"</code>.' };
+        }
+        if (/^[bB]["']/.test(s)) {
+          return { ok: false, message: 'Bytes literals (<code>b"..."</code>) are not supported—use a regular string like <code>"Tanzeela"</code>.' };
+        }
+
+        // 4. List literal -> list
+        if (s.startsWith("[")) {
+          return tokenizeAndParseList(s, nestingDepth);
+        }
+        if (s.endsWith("]")) {
+          return { ok: false, message: 'Missing opening <code>[</code> for list literal (e.g., <code>[1, 2, 3]</code>).' };
+        }
+
+        // 5. Numeric literals -> int or float
+        if (
+          /^[+-]?(?:0(?:_?0)*|[1-9](?:_?\d)*)$/.test(s) ||
+          /^[+-]?0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*$/.test(s) ||
+          /^[+-]?0[bB][01](?:_?[01])*$/.test(s) ||
+          /^[+-]?0[oO][0-7](?:_?[0-7])*$/.test(s)
+        ) {
+          return parseIntLiteral(s);
+        }
+        if (/^[+-]?(?:(?:\d(?:_?\d)*\.\d(?:_?\d)*|\d(?:_?\d)*\.|\.\d(?:_?\d)*)(?:[eE][+-]?\d(?:_?\d)*)?|\d(?:_?\d)*[eE][+-]?\d(?:_?\d)*)$/.test(s)) {
+          return parseFloatLiteral(s);
+        }
+
+        // 6. Helpful error explanations for invalid Python literal syntax
+        if (/^[+-]?0[xX]/.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is not a valid hexadecimal integer (use digits <code>0-9</code> and <code>a-f</code>, e.g., <code>0x1f</code>).` };
+        }
+        if (/^[+-]?0[bB]/.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is not a valid binary integer (use only <code>0</code> and <code>1</code>, e.g., <code>0b101</code>).` };
+        }
+        if (/^[+-]?0[oO]/.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is not a valid octal integer (use digits <code>0-7</code>, e.g., <code>0o17</code>).` };
+        }
+        if (/^[+-]?0\d/.test(s)) {
+          return { ok: false, message: `Leading zeros in decimal integers like <code>${escapeHtml(s)}</code> are not allowed in Python 3.` };
+        }
+        if (/^[+-]?\d[\d_]*\.\d*\.[\d_.]*/.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> has multiple decimal points—a <code>float</code> can only have one (e.g., <code>3.14</code>).` };
+        }
+        if (/^[+-]?[\d_]+(\.[\d_]*)?$/.test(s) && s.includes("_")) {
+          return { ok: false, message: `Invalid underscore placement in <code>${escapeHtml(s)}</code> (place single underscores only between digits, like <code>1_000</code>).` };
+        }
+        if (s.startsWith("(") && s.endsWith(")")) {
+          return { ok: false, message: `Tuples <code>${escapeHtml(s)}</code> are not supported yet—use a list <code>[...]</code> or a single literal.` };
+        }
+        if (s.startsWith("{") && s.endsWith("}")) {
+          return { ok: false, message: `Dicts and sets <code>${escapeHtml(s)}</code> are not supported yet—use a list <code>[...]</code>, string, number, bool, or <code>None</code>.` };
+        }
+        if (/^[A-Za-z_][A-Za-z0-9_]*\s*=[^=]/.test(s)) {
+          return { ok: false, message: 'Enter only the value on the right side of <code>=</code> (put the variable name in the left box).' };
+        }
+        if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is unquoted—wrap text in quotes for a string (<code>"${escapeHtml(s)}"</code>), or use <code>True</code>, <code>False</code>, or <code>None</code>.` };
+        }
+        if (s.endsWith('"') || s.endsWith("'")) {
+          const q = s[s.length - 1];
+          return { ok: false, message: `Missing opening ${q} quote—wrap strings in matching quotes like <code>${q}Tanzeela${q}</code>.` };
+        }
+        if (/^[A-Za-z_][A-Za-z0-9_]*\s*\(/.test(s) || /[+\-*/%]/.test(s)) {
+          return { ok: false, message: `<code>${escapeHtml(s)}</code> is an expression, not a literal. Enter a direct value like <code>25</code>, <code>3.14</code>, <code>"Tanzeela"</code>, <code>True</code>, <code>[1, 2, 3]</code>, or <code>None</code>.` };
+        }
+
+        return {
+          ok: false,
+          message: `<code>${escapeHtml(s)}</code> is not a valid Python literal. Try <code>25</code> (<code>int</code>), <code>3.14</code> (<code>float</code>), <code>"Tanzeela"</code> (<code>str</code>), <code>True</code> (<code>bool</code>), <code>[1, 2, 3]</code> (<code>list</code>), or <code>None</code> (<code>NoneType</code>).`
+        };
+      }
+
+      // ---- Application State ----
+      let nextVarId = 1;
+      function makeVar(name, rawValue) {
+        const parsed = parseAutoPythonLiteral(rawValue);
+        if (!parsed.ok) throw new Error(parsed.message);
+        return {
+          id: `var_${nextVarId++}`,
+          name,
+          type: parsed.type,
+          parsed
+        };
+      }
+
+      function getDefaultVariables() {
+        nextVarId = 1;
+        return [
+          makeVar("count", "42"),
+          makeVar("limit", "42"),
+          makeVar("pi", "3.14"),
+          makeVar("name", '"Ada"'),
+          makeVar("active", "True"),
+          makeVar("items", '[42, "Ada"]'),
+          makeVar("result", "None")
+        ];
+      }
+
+      let variables = getDefaultVariables();
+      let editingVarId = null; // null = create mode, string = editing existing variable
+      let editSnapshot = null; // stores original state while editing for clean Cancel
+      let activeLockedId = null;
+      let hoveredId = null;
+
+      // Derived graph model (rebuilt on every change)
+      let currentModel = { names: [], objects: [], types: TYPE_DEFS, edges: [], nodeById: new Map() };
+
+      function buildGraphModel() {
+        const names = [];
+        const objects = [];
+        const objectByKey = new Map(); // internKey -> object node
+        const edges = [];
+
+        // 1. Create Variable Name nodes and primary Memory Objects
+        variables.forEach((v) => {
+          const p = v.parsed;
+          const accent = TYPE_COLORS[v.type];
+          let obj = null;
+
+          if (p.internKey && objectByKey.has(p.internKey)) {
+            obj = objectByKey.get(p.internKey);
+          } else {
+            const objId = p.internKey ? `obj:${p.internKey}` : `obj:${v.id}`;
+            obj = {
+              id: objId,
+              type: v.type,
+              typeId: `type:${v.type}`,
+              value: p.display,
+              isContainer: v.type === "list",
+              elements: v.type === "list" ? p.elements : null,
+              slots: [],
+              mem: v.type === "bool"
+                ? (p.boolVal ? "0x0001" : "0x0000")
+                : v.type === "NoneType"
+                  ? "0x0002"
+                  : memAddress(objId + p.display),
+              mutability: v.type === "list" ? "mutable" : "immutable",
+              interned: Boolean(p.interned),
+              accent,
+              incomingNames: []
+            };
+            objects.push(obj);
+            if (p.internKey) objectByKey.set(p.internKey, obj);
+          }
+
+          obj.incomingNames.push(v.name);
+
+          const code = `${v.name} = ${p.display}`;
+          names.push({
+            id: `var:${v.id}`,
+            varId: v.id,
+            label: v.name,
+            assign: `= ${p.display}`,
+            target: obj.id,
+            type: v.type,
+            accent,
+            code,
+            rawValue: p.display,
+            desc: buildVarDesc(v, obj),
+            badges: buildVarBadges(v, obj)
+          });
+
+          edges.push({
+            id: `e:var:${v.id}->${obj.id}`,
+            kind: "bind",
+            from: `var:${v.id}`,
+            to: obj.id,
+            accent
+          });
+        });
+
+        // 2. Wire list element slots ONLY to real matching shared/interned objects in Memory Objects
+        objects.forEach((o) => {
+          if (o.isContainer && o.elements) {
+            o.slots = o.elements.map((elItem, idx) => {
+              const targetObj = elItem.internKey ? objectByKey.get(elItem.internKey) : null;
+              if (targetObj && targetObj.id !== o.id) {
+                targetObj.incomingFromList = (targetObj.incomingFromList || 0) + 1;
+                edges.push({
+                  id: `e:${o.id}[${idx}]->${targetObj.id}`,
+                  kind: "element",
+                  from: o.id,
+                  slotIndex: idx,
+                  to: targetObj.id,
+                  accent: TYPE_COLORS[elItem.type]
+                });
+              }
+              return {
+                index: idx,
+                display: elItem.display,
+                type: elItem.type,
+                accent: TYPE_COLORS[elItem.type],
+                target: targetObj && targetObj.id !== o.id ? targetObj.id : null
+              };
+            });
+          }
+
+          // Object -> Type edge
+          edges.push({
+            id: `e:${o.id}->${o.typeId}`,
+            kind: "typeof",
+            from: o.id,
+            to: o.typeId,
+            accent: o.accent
+          });
+        });
+
+        // Populate rich object & type inspector metadata after ref counts are known
+        objects.forEach((o) => {
+          const totalRefs = o.incomingNames.length + (o.incomingFromList || 0);
+          o.code = o.isContainer
+            ? `${o.incomingNames[0]} = ${o.value}  # <list at ${o.mem}>`
+            : `${o.value}  # <${o.type} at ${o.mem}>`;
+
+          const holders = o.incomingNames.map((n) => `<strong>${escapeHtml(n)}</strong>`).join(", ");
+          if (o.isContainer) {
+            const linkedCount = o.slots.filter((s) => s.target).length;
+            o.desc = `<strong>Mutable container</strong> bound to ${holders}. Holds ${o.slots.length} item${o.slots.length === 1 ? "" : "s"}${linkedCount ? ` (${linkedCount} linked to shared memory objects)` : ""}.`;
+            o.badges = [`class: list`, "mutable", `${o.slots.length} item${o.slots.length === 1 ? "" : "s"}`];
+          } else {
+            const shareNote =
+              totalRefs > 1
+                ? ` Shared by ${totalRefs} references (${holders}${o.incomingFromList ? " + list slot" : ""}).`
+                : ` Referenced by ${holders}.`;
+            const internNote =
+              o.type === "bool"
+                ? " Singleton boolean."
+                : o.type === "NoneType"
+                  ? " Singleton None object."
+                  : o.type === "int" && o.interned
+                    ? " Small int (-5..256) interned by CPython."
+                    : o.type === "int"
+                      ? " Separate int object (outside -5..256 cache)."
+                      : "";
+            o.desc = `Immutable <strong>${o.type}</strong> object.${shareNote}${internNote}`;
+            o.badges = [`class: ${o.type}`, o.mutability, `${totalRefs} ref${totalRefs === 1 ? "" : "s"} in graph`];
+          }
+        });
+
+        // Always include accurate Python bool -> int inheritance edge
+        edges.push({
+          id: "e:type:bool->type:int",
+          kind: "inherit",
+          from: "type:bool",
+          to: "type:int",
+          accent: TYPE_COLORS.bool
+        });
+
+        const types = TYPE_DEFS.map((t) => {
+          const count = objects.filter((o) => o.typeId === t.id).length;
+          return {
+            ...t,
+            objectCount: count,
+            badges: [...t.badges, `${count} object${count === 1 ? "" : "s"} active`]
+          };
+        });
+
+        const nodeById = new Map();
+        [...names, ...objects, ...types].forEach((n) => nodeById.set(n.id, n));
+
+        currentModel = { names, objects, types, edges, nodeById };
+      }
+
+      function buildVarDesc(v, obj) {
+        const safeName = escapeHtml(v.name);
+        const safeVal = escapeHtml(v.parsed.display);
+        if (obj.incomingNames.length > 1) {
+          const others = obj.incomingNames.filter((n) => n !== v.name).map((n) => `<strong>${escapeHtml(n)}</strong>`).join(", ");
+          return `<strong>${safeName}</strong> points to shared <code>${obj.type}</code> object <strong>${safeVal}</strong> (same identity as ${others}). Click to edit or rename.`;
+        }
+        if (v.type === "list") {
+          return `<strong>${safeName}</strong> binds to a <strong>mutable list</strong> object holding ${v.parsed.elements.length} reference${v.parsed.elements.length === 1 ? "" : "s"}. Click to edit or delete.`;
+        }
+        if (v.type === "bool") {
+          return `<strong>${safeName}</strong> binds to singleton <strong>${safeVal}</strong> (<code>bool</code> subclasses <code>int</code>). Click to edit or delete.`;
+        }
+        if (v.type === "NoneType") {
+          return `<strong>${safeName}</strong> binds to singleton <strong>None</strong> (<code>NoneType</code>). Click to edit, rename, or delete.`;
+        }
+        return `<strong>${safeName}</strong> binds to immutable <code>${v.type}</code> object <strong>${safeVal}</strong>. Click to edit, rename, or delete.`;
+      }
+
+      function buildVarBadges(v, obj) {
+        const list = [`type(${v.name}) → ${v.type}`];
+        if (obj.incomingNames.length > 1) {
+          const other = obj.incomingNames.find((n) => n !== v.name);
+          list.push(`${v.name} is ${other} → True`);
+        } else {
+          list.push(v.type === "list" ? "mutable" : "immutable");
+        }
+        return list;
+      }
+
+      function getRelatedSet(startId) {
+        const relatedNodes = new Set([startId]);
+        const relatedEdges = new Set();
+        const { nodeById, objects, edges } = currentModel;
+        const node = nodeById.get(startId);
+        if (!node) return { relatedNodes, relatedEdges };
+
+        if (startId.startsWith("var:")) {
+          const obj = nodeById.get(node.target);
+          if (obj) {
+            relatedNodes.add(obj.id);
+            relatedEdges.add(`e:${node.id}->${obj.id}`);
+            relatedNodes.add(obj.typeId);
+            relatedEdges.add(`e:${obj.id}->${obj.typeId}`);
+            if (obj.slots) {
+              obj.slots.forEach((s) => {
+                if (s.target) {
+                  relatedNodes.add(s.target);
+                  relatedEdges.add(`e:${obj.id}[${s.index}]->${s.target}`);
+                  const elObj = nodeById.get(s.target);
+                  if (elObj) {
+                    relatedNodes.add(elObj.typeId);
+                    relatedEdges.add(`e:${elObj.id}->${elObj.typeId}`);
+                  }
+                }
+              });
+            }
+            if (obj.typeId === "type:bool") {
+              relatedNodes.add("type:int");
+              relatedEdges.add("e:type:bool->type:int");
+            }
+          }
+        } else if (startId.startsWith("obj:")) {
+          relatedNodes.add(node.typeId);
+          relatedEdges.add(`e:${node.id}->${node.typeId}`);
+          edges.forEach((e) => {
+            if (e.to === node.id) {
+              relatedNodes.add(e.from);
+              relatedEdges.add(e.id);
+            }
+          });
+          if (node.slots) {
+            node.slots.forEach((s) => {
+              if (s.target) {
+                relatedNodes.add(s.target);
+                relatedEdges.add(`e:${node.id}[${s.index}]->${s.target}`);
+                const elObj = nodeById.get(s.target);
+                if (elObj) {
+                  relatedNodes.add(elObj.typeId);
+                  relatedEdges.add(`e:${elObj.id}->${elObj.typeId}`);
+                }
+              }
+            });
+          }
+          if (node.typeId === "type:bool") {
+            relatedNodes.add("type:int");
+            relatedEdges.add("e:type:bool->type:int");
+          }
+        } else if (startId.startsWith("type:")) {
+          objects.forEach((o) => {
+            if (o.typeId === startId) {
+              relatedNodes.add(o.id);
+              relatedEdges.add(`e:${o.id}->${startId}`);
+              edges.forEach((e) => {
+                if (e.kind === "bind" && e.to === o.id) {
+                  relatedNodes.add(e.from);
+                  relatedEdges.add(e.id);
+                }
+              });
+            }
+          });
+          if (startId === "type:bool" || startId === "type:int") {
+            relatedNodes.add("type:bool");
+            relatedNodes.add("type:int");
+            relatedEdges.add("e:type:bool->type:int");
+          }
+        }
+
+        return { relatedNodes, relatedEdges };
+      }
+
+      function el(tag, attrs = {}, parent = null) {
+        const node = document.createElementNS(SVG_NS, tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          node.setAttribute(k, String(v));
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      // ---- Responsive Dynamic SVG Layout ----
+      function getLayout(isCompact) {
+        const { names, objects, types } = currentModel;
+        const nCount = names.length;
+        const oCount = objects.length;
+        const tCount = types.length;
+
+        const topY = isCompact ? 42 : 48;
+        const bottomPad = 18;
+
+        const boxW = isCompact
+          ? { names: 112, objects: 120, types: 88 }
+          : { names: 218, objects: 228, types: 188 };
+        const colX = isCompact
+          ? { names: 6, objects: 152, types: 314 }
+          : { names: 48, objects: 444, types: 880 };
+
+        const nameH = isCompact ? 48 : 50;
+        const nameGap = isCompact ? 11 : 12;
+        const objH = isCompact ? 54 : 58;
+        const listObjH = isCompact ? 60 : 64;
+        const objGap = isCompact ? 12 : 14;
+        const typeH = isCompact ? 48 : 50;
+        const typeGap = isCompact ? 12 : 14;
+
+        const totalNamesH = nCount > 0 ? nCount * nameH + (nCount - 1) * nameGap : 0;
+        const totalObjsH = objects.reduce((acc, o, i) => acc + (o.isContainer ? listObjH : objH) + (i > 0 ? objGap : 0), 0);
+        const totalTypesH = tCount * typeH + (tCount - 1) * typeGap;
+
+        const minH = isCompact ? 420 : 440;
+        const contentH = Math.max(totalNamesH, totalObjsH, totalTypesH, 340);
+        const H = Math.max(minH, topY + contentH + bottomPad);
+        const W = isCompact ? 420 : 1120;
+
+        const positions = {};
+
+        // Center each column vertically within contentH
+        let curY = topY + (contentH - totalNamesH) / 2;
+        names.forEach((n) => {
+          positions[n.id] = { x: colX.names, y: curY, w: boxW.names, h: nameH };
+          curY += nameH + nameGap;
+        });
+
+        curY = topY + (contentH - totalObjsH) / 2;
+        objects.forEach((o) => {
+          const h = o.isContainer ? listObjH : objH;
+          positions[o.id] = { x: colX.objects, y: curY, w: boxW.objects, h };
+          curY += h + objGap;
+        });
+
+        curY = topY + (contentH - totalTypesH) / 2;
+        types.forEach((t) => {
+          positions[t.id] = { x: colX.types, y: curY, w: boxW.types, h: typeH };
+          curY += typeH + typeGap;
+        });
+
+        return { W, H, compact: isCompact, positions, colX, boxW, headingY: isCompact ? 18 : 20 };
+      }
+
+      function renderGraph() {
+        buildGraphModel();
+        const isCompact = window.innerWidth < 768;
+        const layout = getLayout(isCompact);
+        const { W, H, compact, positions, colX, boxW, headingY } = layout;
+        const { names, objects, types, edges } = currentModel;
+
+        svg.innerHTML = "";
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+        const defs = el("defs", {}, svg);
+        const glow = el("filter", { id: "softGlow", x: "-30%", y: "-30%", width: "160%", height: "160%" }, defs);
+        el("feGaussianBlur", { stdDeviation: "4", result: "blur" }, glow);
+        const merge = el("feMerge", {}, glow);
+        el("feMergeNode", { in: "blur" }, merge);
+        el("feMergeNode", { in: "SourceGraphic" }, merge);
+
+        // Column headings
+        const headingsLayer = el("g", {}, svg);
+        const heads = [
+          { text: compact ? "NAMES" : "1 · VARIABLE NAMES", x: colX.names + boxW.names / 2 },
+          { text: compact ? "OBJECTS" : "2 · MEMORY OBJECTS", x: colX.objects + boxW.objects / 2 },
+          { text: compact ? "TYPES" : "3 · DATA TYPES", x: colX.types + boxW.types / 2 }
+        ];
+        heads.forEach((h) => {
+          const t = el("text", { x: h.x, y: headingY, "text-anchor": "middle", class: "col-heading" }, headingsLayer);
+          t.textContent = h.text;
+        });
+
+        const edgesLayer = el("g", { id: "edges-layer" }, svg);
+        const nodesLayer = el("g", { id: "nodes-layer" }, svg);
+
+        // Track incoming bind count per object for clean vertical entry offsets
+        const incomingCounter = new Map();
+        const incomingTotals = new Map();
+        edges.forEach((e) => {
+          if (e.kind === "bind") {
+            incomingTotals.set(e.to, (incomingTotals.get(e.to) || 0) + 1);
+          }
+        });
+
+        // Render edges
+        edges.forEach((e, idx) => {
+          const g = el("g", { class: "edge-group", "data-edge-id": e.id }, edgesLayer);
+          let d = "";
+
+          if (e.kind === "bind") {
+            const p1 = positions[e.from];
+            const p2 = positions[e.to];
+            const count = incomingTotals.get(e.to) || 1;
+            const seen = incomingCounter.get(e.to) || 0;
+            incomingCounter.set(e.to, seen + 1);
+            const spread = count > 1 ? (seen - (count - 1) / 2) * (compact ? 10 : 12) : 0;
+
+            const x1 = p1.x + p1.w;
+            const y1 = p1.y + p1.h / 2;
+            const x2 = p2.x;
+            const y2 = p2.y + p2.h / 2 + spread;
+            const dx = (x2 - x1) * 0.52;
+            d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+          } else if (e.kind === "typeof") {
+            const p1 = positions[e.from];
+            const p2 = positions[e.to];
+            const x1 = p1.x + p1.w;
+            const y1 = p1.y + p1.h / 2;
+            const x2 = p2.x;
+            const y2 = p2.y + p2.h / 2;
+            const dx = (x2 - x1) * 0.5;
+            d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+          } else if (e.kind === "element") {
+            const pList = positions[e.from];
+            const pTarget = positions[e.to];
+            const goLeft = e.slotIndex % 2 === 0;
+            const x1 = goLeft ? pList.x + pList.w * 0.3 : pList.x + pList.w * 0.7;
+            const y1 = pTarget.y < pList.y ? pList.y : pList.y + pList.h;
+            const x2 = goLeft ? pTarget.x + 14 : pTarget.x + pTarget.w - 14;
+            const y2 = pTarget.y < pList.y ? pTarget.y + pTarget.h : pTarget.y;
+            const arcPull = goLeft ? (compact ? -42 : -82) : (compact ? 42 : 82);
+            const cx1 = x1 + arcPull;
+            const cy1 = y1 + (y2 - y1) * 0.32;
+            const cx2 = x2 + arcPull * 0.72;
+            const cy2 = y2 - (y2 - y1) * 0.32;
+            d = `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
+          } else if (e.kind === "inherit") {
+            const pBool = positions[e.from];
+            const pInt = positions[e.to];
+            const x1 = pBool.x + pBool.w;
+            const y1 = pBool.y + pBool.h / 2;
+            const x2 = pInt.x + pInt.w;
+            const y2 = pInt.y + pInt.h / 2;
+            const bulge = compact ? 16 : 32;
+            d = `M ${x1} ${y1} C ${x1 + bulge} ${y1}, ${x2 + bulge} ${y2}, ${x2} ${y2}`;
+          }
+
+          if (e.kind === "inherit") {
+            el("path", {
+              d,
+              class: "edge-inherit",
+              stroke: e.accent,
+              "stroke-width": "1.6",
+              "stroke-opacity": "0.38"
+            }, g);
+            return;
+          }
+
+          const gradId = `grad-${idx}`;
+          const grad = el("linearGradient", { id: gradId, gradientUnits: "userSpaceOnUse" }, defs);
+          if (e.kind === "element") {
+            grad.setAttribute("x1", "0%");
+            grad.setAttribute("y1", "100%");
+            grad.setAttribute("x2", "0%");
+            grad.setAttribute("y2", "0%");
+            el("stop", { offset: "0%", "stop-color": TYPE_COLORS.list, "stop-opacity": "0.85" }, grad);
+            el("stop", { offset: "100%", "stop-color": e.accent, "stop-opacity": "0.95" }, grad);
+          } else if (e.kind === "bind") {
+            const p1 = positions[e.from];
+            const p2 = positions[e.to];
+            grad.setAttribute("x1", p1.x + p1.w);
+            grad.setAttribute("y1", p1.y);
+            grad.setAttribute("x2", p2.x);
+            grad.setAttribute("y2", p2.y);
+            el("stop", { offset: "0%", "stop-color": "#94a3b8", "stop-opacity": "0.6" }, grad);
+            el("stop", { offset: "100%", "stop-color": e.accent, "stop-opacity": "0.95" }, grad);
+          } else {
+            const p1 = positions[e.from];
+            const p2 = positions[e.to];
+            grad.setAttribute("x1", p1.x + p1.w);
+            grad.setAttribute("y1", p1.y);
+            grad.setAttribute("x2", p2.x);
+            grad.setAttribute("y2", p2.y);
+            el("stop", { offset: "0%", "stop-color": e.accent, "stop-opacity": "0.85" }, grad);
+            el("stop", { offset: "100%", "stop-color": e.accent, "stop-opacity": "1" }, grad);
+          }
+
+          el("path", {
+            d,
+            class: "edge-base",
+            stroke: e.kind === "element" ? e.accent : `url(#${gradId})`,
+            "stroke-width": e.kind === "element" ? "1.8" : "2.2",
+            "stroke-opacity": e.kind === "element" ? "0.45" : "0.5",
+            "stroke-dasharray": e.kind === "element" ? "5 4" : "none"
+          }, g);
+
+          if (e.kind !== "element") {
+            el("path", {
+              d,
+              class: "edge-flow",
+              stroke: e.accent,
+              "stroke-width": "2",
+              "stroke-opacity": "0.75",
+              style: `animation-delay: -${(idx * 0.35).toFixed(2)}s`
+            }, g);
+          }
+        });
+
+        // Empty state hint if user deletes all variables
+        if (names.length === 0) {
+          const emptyX = (colX.names + colX.objects + boxW.objects) / 2;
+          const emptyY = H / 2;
+          const msg = el("text", {
+            x: emptyX,
+            y: emptyY - 6,
+            "text-anchor": "middle",
+            class: "node-sub",
+            "font-size": compact ? "12" : "14"
+          }, nodesLayer);
+          msg.textContent = "No variables bound in memory yet.";
+
+          const sub = el("text", {
+            x: emptyX,
+            y: emptyY + 16,
+            "text-anchor": "middle",
+            class: "node-mono-sub",
+            "font-size": compact ? "10.5" : "12"
+          }, nodesLayer);
+          sub.textContent = "Use the bar above to add one (e.g., age = 20)";
+        }
+
+        // Render Variable Name Nodes
+        names.forEach((n) => {
+          const p = positions[n.id];
+          const g = createNodeGroup(n.id, `${n.code}, click to edit or inspect`, nodesLayer, n.varId);
+
+          el("rect", {
+            x: p.x - 3,
+            y: p.y - 3,
+            width: p.w + 6,
+            height: p.h + 6,
+            rx: 14,
+            fill: "none",
+            stroke: n.accent,
+            "stroke-width": "1.6",
+            opacity: "0",
+            class: "node-halo",
+            filter: "url(#softGlow)"
+          }, g);
+
+          el("rect", {
+            x: p.x,
+            y: p.y,
+            width: p.w,
+            height: p.h,
+            rx: 11,
+            fill: editingVarId === n.varId ? "rgba(22, 34, 58, 0.96)" : "rgba(15, 22, 38, 0.92)",
+            stroke: editingVarId === n.varId ? n.accent : "rgba(148, 163, 184, 0.24)",
+            "stroke-width": editingVarId === n.varId ? "1.6" : "1.2",
+            class: "node-box"
+          }, g);
+
+          const maxCharsName = compact ? 11 : 18;
+          const maxCharsAssign = compact ? 13 : 22;
+
+          const lbl = el("text", {
+            x: p.x + (compact ? 10 : 14),
+            y: p.y + (compact ? 21 : 22),
+            class: "node-label",
+            "font-size": compact ? "12.5" : "14",
+            "font-weight": "600"
+          }, g);
+          lbl.textContent = truncate(n.label, maxCharsName);
+
+          const sub = el("text", {
+            x: p.x + (compact ? 10 : 14),
+            y: p.y + (compact ? 38 : 40),
+            class: "node-mono-sub",
+            "font-size": compact ? "10" : "11.2"
+          }, g);
+          sub.textContent = compact ? truncate(n.assign, maxCharsAssign) : truncate(n.code, maxCharsAssign);
+
+          // Inline Delete (×) button on variable node
+          const delGroup = el("g", {
+            class: "node-delete-btn",
+            role: "button",
+            "aria-label": `Delete variable ${n.label}`
+          }, g);
+          const bx = p.x + p.w - (compact ? 15 : 18);
+          const by = p.y + (compact ? 14 : 15);
+          el("circle", {
+            cx: bx,
+            cy: by,
+            r: compact ? 7.5 : 8.5,
+            fill: "rgba(15, 23, 42, 0.9)",
+            stroke: "rgba(148, 163, 184, 0.35)",
+            "stroke-width": "1"
+          }, delGroup);
+          const xText = el("text", {
+            x: bx,
+            y: by + 3.3,
+            "text-anchor": "middle",
+            "font-family": "var(--font-sans)",
+            "font-size": compact ? "10" : "11",
+            fill: "#cbd5e1",
+            style: "pointer-events: none;"
+          }, delGroup);
+          xText.textContent = "×";
+
+          delGroup.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            deleteVariable(n.varId);
+          });
+
+          // Right connector dot
+          el("circle", {
+            cx: p.x + p.w,
+            cy: p.y + p.h / 2,
+            r: 4,
+            fill: n.accent,
+            "fill-opacity": "0.9",
+            class: "port-dot"
+          }, g);
+        });
+
+        // Render Object Nodes
+        objects.forEach((o) => {
+          const p = positions[o.id];
+          const g = createNodeGroup(o.id, `Object ${o.value}, type ${o.type}, click to inspect`, nodesLayer);
+
+          el("rect", {
+            x: p.x - 4,
+            y: p.y - 4,
+            width: p.w + 8,
+            height: p.h + 8,
+            rx: 16,
+            fill: "none",
+            stroke: o.accent,
+            "stroke-width": "1.6",
+            opacity: "0",
+            class: "node-halo",
+            filter: "url(#softGlow)"
+          }, g);
+
+          el("rect", {
+            x: p.x,
+            y: p.y,
+            width: p.w,
+            height: p.h,
+            rx: 12,
+            fill: "rgba(13, 20, 36, 0.96)",
+            stroke: o.accent,
+            "stroke-opacity": "0.45",
+            "stroke-width": "1.4",
+            class: "node-box"
+          }, g);
+
+          el("rect", {
+            x: p.x + 12,
+            y: p.y + 1,
+            width: p.w - 24,
+            height: 2,
+            rx: 1,
+            fill: o.accent,
+            "fill-opacity": "0.8"
+          }, g);
+
+          if (o.isContainer) {
+            const visibleSlots = o.slots.slice(0, compact ? 2 : 3);
+            if (visibleSlots.length === 0) {
+              const val = el("text", {
+                x: p.x + p.w / 2,
+                y: p.y + (compact ? 29 : 31),
+                "text-anchor": "middle",
+                class: "node-label",
+                "font-size": compact ? "14" : "16",
+                "font-weight": "600"
+              }, g);
+              val.textContent = "[ ]";
+            } else {
+              const count = visibleSlots.length;
+              const gap = compact ? 5 : 8;
+              const sidePad = compact ? 8 : 12;
+              const extraBadgeW = o.slots.length > count ? (compact ? 22 : 28) : 0;
+              const availW = p.w - sidePad * 2 - extraBadgeW - gap * (count - 1 + (extraBadgeW ? 1 : 0));
+              const slotW = Math.min(compact ? 48 : 74, availW / count);
+              const slotH = compact ? 23 : 25;
+              const totalW = count * slotW + (count - 1) * gap + (extraBadgeW ? gap + extraBadgeW : 0);
+              const startX = p.x + (p.w - totalW) / 2;
+              const slotY = p.y + (compact ? 11 : 12);
+
+              visibleSlots.forEach((s, idx) => {
+                const sx = startX + idx * (slotW + gap);
+                el("rect", {
+                  x: sx,
+                  y: slotY,
+                  width: slotW,
+                  height: slotH,
+                  rx: 6,
+                  fill: "rgba(2, 6, 23, 0.72)",
+                  stroke: s.accent,
+                  "stroke-opacity": "0.62",
+                  "stroke-width": "1"
+                }, g);
+                const st = el("text", {
+                  x: sx + slotW / 2,
+                  y: slotY + slotH / 2 + 3.5,
+                  "text-anchor": "middle",
+                  class: "node-label",
+                  "font-size": compact ? "9.5" : "10.5",
+                  fill: s.accent
+                }, g);
+                const slotText = s.target ? (compact ? `[${idx}]` : `[${idx}] ref`) : truncate(s.display, compact ? 5 : 8);
+                st.textContent = slotText;
+              });
+
+              if (extraBadgeW) {
+                const bx = startX + count * (slotW + gap);
+                const bt = el("text", {
+                  x: bx + extraBadgeW / 2,
+                  y: slotY + slotH / 2 + 3.5,
+                  "text-anchor": "middle",
+                  class: "node-mono-sub",
+                  "font-size": compact ? "9.5" : "10.5"
+                }, g);
+                bt.textContent = `+${o.slots.length - count}`;
+              }
+            }
+
+            const meta = el("text", {
+              x: p.x + p.w / 2,
+              y: p.y + p.h - 10,
+              "text-anchor": "middle",
+              class: "node-mono-sub",
+              "font-size": compact ? "9" : "10.8"
+            }, g);
+            meta.textContent = compact ? `${o.mem} • mut` : `${o.mem} • mutable`;
+          } else {
+            const val = el("text", {
+              x: p.x + p.w / 2,
+              y: p.y + (compact ? 28 : 30),
+              "text-anchor": "middle",
+              class: "node-label",
+              "font-size": compact ? (o.value.length > 9 ? "12" : "14.5") : (o.value.length > 14 ? "14" : "17"),
+              "font-weight": "600"
+            }, g);
+            val.textContent = truncate(o.value, compact ? 12 : 18);
+
+            const meta = el("text", {
+              x: p.x + p.w / 2,
+              y: p.y + p.h - 11,
+              "text-anchor": "middle",
+              class: "node-mono-sub",
+              "font-size": compact ? "9" : "10.8"
+            }, g);
+            meta.textContent = compact ? `${o.mem} • imm` : `${o.mem} • ${o.mutability}`;
+          }
+
+          el("circle", { cx: p.x, cy: p.y + p.h / 2, r: 4, fill: o.accent, class: "port-dot" }, g);
+          el("circle", { cx: p.x + p.w, cy: p.y + p.h / 2, r: 4, fill: o.accent, class: "port-dot" }, g);
+        });
+
+        // Render Type Nodes
+        types.forEach((t) => {
+          const p = positions[t.id];
+          const isUnused = t.objectCount === 0;
+          const g = createNodeGroup(t.id, `Data type ${t.label}, click to inspect`, nodesLayer);
+
+          el("rect", {
+            x: p.x - 4,
+            y: p.y - 4,
+            width: p.w + 8,
+            height: p.h + 8,
+            rx: 15,
+            fill: "none",
+            stroke: t.accent,
+            "stroke-width": "1.6",
+            opacity: "0",
+            class: "node-halo",
+            filter: "url(#softGlow)"
+          }, g);
+
+          el("rect", {
+            x: p.x,
+            y: p.y,
+            width: p.w,
+            height: p.h,
+            rx: 11,
+            fill: "rgba(15, 22, 38, 0.94)",
+            stroke: t.accent,
+            "stroke-opacity": isUnused ? "0.22" : "0.52",
+            "stroke-width": "1.3",
+            class: "node-box"
+          }, g);
+
+          const lbl = el("text", {
+            x: p.x + p.w / 2,
+            y: p.y + (compact ? 25 : 27),
+            "text-anchor": "middle",
+            class: "node-label",
+            "font-size": compact ? "14" : "16",
+            "font-weight": "600",
+            style: `fill: ${t.accent}; opacity: ${isUnused ? 0.55 : 1}`
+          }, g);
+          lbl.textContent = t.label;
+
+          const sub = el("text", {
+            x: p.x + p.w / 2,
+            y: p.y + p.h - 11,
+            "text-anchor": "middle",
+            class: "node-sub",
+            "font-size": compact ? "9.2" : "10.8"
+          }, g);
+          sub.textContent = compact ? t.tag.split("•")[1].trim() : t.tag;
+
+          el("circle", {
+            cx: p.x,
+            cy: p.y + p.h / 2,
+            r: 4,
+            fill: t.accent,
+            "fill-opacity": isUnused ? "0.3" : "1",
+            class: "port-dot"
+          }, g);
+        });
+
+        applyHighlight();
+      }
+
+      function createNodeGroup(id, ariaLabel, parent, varId = null) {
+        const g = el("g", {
+          class: "node-group",
+          "data-node-id": id,
+          tabindex: "0",
+          role: "button",
+          "aria-label": ariaLabel
+        }, parent);
+
+        g.addEventListener("pointerenter", (e) => {
+          if (e.pointerType === "mouse") {
+            hoveredId = id;
+            applyHighlight();
+          }
+        });
+
+        g.addEventListener("pointerleave", (e) => {
+          if (e.pointerType === "mouse" && hoveredId === id) {
+            hoveredId = null;
+            applyHighlight();
+          }
+        });
+
+        g.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (varId) {
+            // Clicking a variable node loads it into the editor and locks highlight on it
+            const alreadyLocked = activeLockedId === id && editingVarId === varId;
+            if (alreadyLocked) {
+              clearFocusAndEdit();
+            } else {
+              activeLockedId = id;
+              hoveredId = null;
+              enterEditMode(varId);
+              renderGraph();
+            }
+          } else {
+            activeLockedId = activeLockedId === id ? null : id;
+            hoveredId = null;
+            applyHighlight();
+          }
+        });
+
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            g.dispatchEvent(new MouseEvent("click", { bubbles: false }));
+          }
+        });
+
+        return g;
+      }
+
+      function applyHighlight() {
+        const { nodeById } = currentModel;
+        const focusId = hoveredId || (activeLockedId && nodeById.has(activeLockedId) ? activeLockedId : null);
+        if (activeLockedId && !nodeById.has(activeLockedId)) {
+          activeLockedId = null;
+        }
+
+        const nodeEls = svg.querySelectorAll(".node-group");
+        const edgeEls = svg.querySelectorAll(".edge-group");
+
+        if (activeLockedId) {
+          resetFocusBtn.classList.add("visible");
+        } else {
+          resetFocusBtn.classList.remove("visible");
+        }
+
+        if (!focusId) {
+          nodeEls.forEach((n) => {
+            const nid = n.dataset.nodeId;
+            const nodeData = nodeById.get(nid);
+            const unusedType = nid.startsWith("type:") && nodeData && nodeData.objectCount === 0;
+            n.style.opacity = unusedType ? "0.48" : "1";
+            const halo = n.querySelector(".node-halo");
+            if (halo) halo.setAttribute("opacity", "0");
+          });
+          edgeEls.forEach((e) => {
+            e.style.opacity = "1";
+            const base = e.querySelector(".edge-base");
+            const flow = e.querySelector(".edge-flow");
+            const inh = e.querySelector(".edge-inherit");
+            if (base) {
+              const isElem = e.dataset.edgeId.includes("[");
+              base.setAttribute("stroke-width", isElem ? "1.8" : "2.2");
+              base.setAttribute("stroke-opacity", isElem ? "0.45" : "0.5");
+              base.removeAttribute("filter");
+            }
+            if (flow) flow.setAttribute("stroke-opacity", "0.75");
+            if (inh) inh.setAttribute("stroke-opacity", "0.38");
+          });
+
+          inspector.style.borderColor = "rgba(148, 163, 184, 0.14)";
+          inspectorCode.textContent =
+            currentModel.names.length > 0
+              ? currentModel.names.slice(0, 2).map((n) => n.code).join("; ")
+              : "# No variables defined";
+          inspectorCode.style.borderColor = "rgba(148, 163, 184, 0.2)";
+          inspectorText.innerHTML =
+            "Enter a variable name and Python value above (type is detected automatically) or click any <strong>Variable</strong> node to edit.";
+          inspectorBadges.innerHTML =
+            `<span class="meta-pill">${currentModel.names.length} variable${currentModel.names.length === 1 ? "" : "s"}</span>` +
+            `<span class="meta-pill">${currentModel.objects.length} memory object${currentModel.objects.length === 1 ? "" : "s"}</span>`;
+          return;
+        }
+
+        const { relatedNodes, relatedEdges } = getRelatedSet(focusId);
+        const focusData = nodeById.get(focusId);
+
+        nodeEls.forEach((n) => {
+          const nid = n.dataset.nodeId;
+          const active = relatedNodes.has(nid);
+          n.style.opacity = active ? "1" : "0.18";
+          const halo = n.querySelector(".node-halo");
+          if (halo) halo.setAttribute("opacity", nid === focusId ? "0.95" : active ? "0.45" : "0");
+        });
+
+        edgeEls.forEach((e) => {
+          const eid = e.dataset.edgeId;
+          const active = relatedEdges.has(eid);
+          e.style.opacity = active ? "1" : "0.1";
+          const base = e.querySelector(".edge-base");
+          const flow = e.querySelector(".edge-flow");
+          const inh = e.querySelector(".edge-inherit");
+          if (base) {
+            base.setAttribute("stroke-width", active ? "3.2" : "1.8");
+            base.setAttribute("stroke-opacity", active ? "0.95" : "0.25");
+            if (active) base.setAttribute("filter", "url(#softGlow)");
+            else base.removeAttribute("filter");
+          }
+          if (flow) flow.setAttribute("stroke-opacity", active ? "1" : "0.15");
+          if (inh) {
+            inh.setAttribute("stroke-opacity", active ? "0.95" : "0.18");
+            inh.setAttribute("stroke-width", active ? "2.4" : "1.4");
+          }
+        });
+
+        if (focusData) {
+          inspector.style.borderColor = `${focusData.accent}55`;
+          inspectorCode.textContent = focusData.code;
+          inspectorCode.style.borderColor = `${focusData.accent}66`;
+          inspectorText.innerHTML = focusData.desc;
+          inspectorBadges.innerHTML = focusData.badges
+            .map(
+              (b) =>
+                `<span class="meta-pill" style="border-color: ${focusData.accent}44; color: #e2e8f0;">${escapeHtml(b)}</span>`
+            )
+            .join("");
+        }
+      }
+
+      // ---- Editor Mode & Form Interactions ----
+      function updateDetectedTypeBadge(rawValue) {
+        const trimmed = rawValue.trim();
+        if (!trimmed) {
+          detectedTypeBox.dataset.type = "auto";
+          detectedTypeValue.textContent = "auto";
+          return null;
+        }
+        const parsed = parseAutoPythonLiteral(rawValue);
+        if (parsed.ok) {
+          detectedTypeBox.dataset.type = parsed.type;
+          detectedTypeValue.textContent = parsed.type;
+        } else {
+          detectedTypeBox.dataset.type = "invalid";
+          detectedTypeValue.textContent = "invalid";
+        }
+        return parsed;
+      }
+
+      function showError(htmlMsg, field) {
+        editorError.innerHTML = htmlMsg;
+        editorError.classList.remove("hidden");
+        form.classList.add("has-error");
+        nameInput.classList.toggle("invalid", field === "name");
+        valInput.classList.toggle("invalid", field === "value");
+      }
+
+      function clearError() {
+        editorError.classList.add("hidden");
+        editorError.innerHTML = "";
+        form.classList.remove("has-error");
+        nameInput.classList.remove("invalid");
+        valInput.classList.remove("invalid");
+      }
+
+      function enterCreateMode() {
+        editingVarId = null;
+        editSnapshot = null;
+        form.classList.remove("is-editing");
+        modeBadge.textContent = "+ New";
+        modeBadge.style.color = "var(--c-int)";
+        modeBadge.style.borderColor = "rgba(56, 189, 248, 0.25)";
+        modeBadge.style.background = "rgba(56, 189, 248, 0.12)";
+        submitBtn.textContent = "Add";
+        deleteBtn.classList.add("hidden");
+        cancelEditBtn.classList.add("hidden");
+        nameInput.value = "";
+        valInput.value = "";
+        updateDetectedTypeBadge("");
+        clearError();
+      }
+
+      function applyEditModeBadge(name, type) {
+        const color = TYPE_COLORS[type] || "var(--c-int)";
+        modeBadge.textContent = `Edit · ${truncate(name, 10)}`;
+        modeBadge.style.color = color;
+        modeBadge.style.borderColor = `${color}55`;
+        modeBadge.style.background = `${color}1f`;
+      }
+
+      function enterEditMode(varId) {
+        const v = variables.find((item) => item.id === varId);
+        if (!v) return;
+        editingVarId = varId;
+        editSnapshot = { name: v.name, type: v.type, parsed: v.parsed };
+        form.classList.add("is-editing");
+        applyEditModeBadge(v.name, v.type);
+        submitBtn.textContent = "Save";
+        deleteBtn.classList.remove("hidden");
+        cancelEditBtn.classList.remove("hidden");
+        nameInput.value = v.name;
+        valInput.value = v.parsed.display;
+        updateDetectedTypeBadge(v.parsed.display);
+        clearError();
+      }
+
+      function restoreEditSnapshot() {
+        if (!editingVarId || !editSnapshot) return;
+        const idx = variables.findIndex((v) => v.id === editingVarId);
+        if (idx !== -1) {
+          variables[idx] = {
+            ...variables[idx],
+            name: editSnapshot.name,
+            type: editSnapshot.type,
+            parsed: editSnapshot.parsed
+          };
+        }
+      }
+
+      function clearFocusAndEdit(restore = false) {
+        if (restore) restoreEditSnapshot();
+        activeLockedId = null;
+        hoveredId = null;
+        enterCreateMode();
+        renderGraph();
+      }
+
+      function deleteVariable(varId) {
+        variables = variables.filter((v) => v.id !== varId);
+        if (editingVarId === varId) {
+          enterCreateMode();
+        }
+        if (activeLockedId === `var:${varId}`) {
+          activeLockedId = null;
+        }
+        renderGraph();
+      }
+
+      function handleLiveEditorInput() {
+        const valCheck = updateDetectedTypeBadge(valInput.value);
+
+        if (editingVarId) {
+          const nameCheck = validateVarName(nameInput.value, editingVarId);
+          if (nameCheck.ok && valCheck && valCheck.ok) {
+            const idx = variables.findIndex((v) => v.id === editingVarId);
+            if (idx !== -1) {
+              variables[idx] = {
+                ...variables[idx],
+                name: nameCheck.name,
+                type: valCheck.type,
+                parsed: valCheck
+              };
+              activeLockedId = `var:${editingVarId}`;
+              applyEditModeBadge(nameCheck.name, valCheck.type);
+              clearError();
+              renderGraph();
+            }
+            return;
+          }
+          // If an error banner is already visible, keep feedback current without stealing focus
+          if (!editorError.classList.contains("hidden")) {
+            if (!nameCheck.ok) {
+              showError(nameCheck.message, "name");
+            } else if (valCheck && !valCheck.ok) {
+              showError(valCheck.message, "value");
+            }
+          }
+          return;
+        }
+
+        // Create mode: if error was visible, clear or refresh as user types
+        if (!editorError.classList.contains("hidden")) {
+          const nameCheck = validateVarName(nameInput.value, null);
+          if (nameCheck.ok && valCheck && valCheck.ok) {
+            clearError();
+          }
+        }
+      }
+
+      nameInput.addEventListener("input", handleLiveEditorInput);
+      valInput.addEventListener("input", handleLiveEditorInput);
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        clearError();
+
+        const nameCheck = validateVarName(nameInput.value, editingVarId);
+        if (!nameCheck.ok) {
+          showError(nameCheck.message, "name");
+          nameInput.focus();
+          return;
+        }
+
+        const valCheck = parseAutoPythonLiteral(valInput.value);
+        updateDetectedTypeBadge(valInput.value);
+        if (!valCheck.ok) {
+          showError(valCheck.message, "value");
+          valInput.focus();
+          return;
+        }
+
+        if (editingVarId) {
+          const idx = variables.findIndex((v) => v.id === editingVarId);
+          if (idx !== -1) {
+            variables[idx] = {
+              ...variables[idx],
+              name: nameCheck.name,
+              type: valCheck.type,
+              parsed: valCheck
+            };
+            activeLockedId = `var:${editingVarId}`;
+            enterEditMode(editingVarId);
+          }
+        } else {
+          const newVar = {
+            id: `var_${nextVarId++}`,
+            name: nameCheck.name,
+            type: valCheck.type,
+            parsed: valCheck
+          };
+          variables.push(newVar);
+          activeLockedId = `var:${newVar.id}`;
+          nameInput.value = "";
+          valInput.value = "";
+          updateDetectedTypeBadge("");
+        }
+
+        renderGraph();
+      });
+
+      deleteBtn.addEventListener("click", () => {
+        if (editingVarId) {
+          deleteVariable(editingVarId);
+        }
+      });
+
+      cancelEditBtn.addEventListener("click", () => {
+        clearFocusAndEdit(true);
+      });
+
+      resetFocusBtn.addEventListener("click", () => {
+        clearFocusAndEdit(false);
+      });
+
+      resetDemoBtn.addEventListener("click", () => {
+        variables = getDefaultVariables();
+        activeLockedId = null;
+        hoveredId = null;
+        enterCreateMode();
+        renderGraph();
+      });
+
+      svg.addEventListener("click", () => {
+        if (activeLockedId || editingVarId) {
+          clearFocusAndEdit(false);
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && (activeLockedId || editingVarId)) {
+          clearFocusAndEdit(Boolean(editingVarId));
+        }
+      });
+
+      let lastCompact = null;
+      window.addEventListener("resize", () => {
+        const isCompact = window.innerWidth < 768;
+        if (isCompact !== lastCompact) {
+          lastCompact = isCompact;
+          renderGraph();
+        }
+      });
+
+      lastCompact = window.innerWidth < 768;
+      updateDetectedTypeBadge("");
+      renderGraph();
+    })();
+  </script>
+</body>
+</html>
