@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Loops | Interactive Explainer</title>
+
+<style>
+:root {
+  --bg:#080d18;
+  --panel:#101a2b;
+  --panel2:#17243a;
+  --border:#293a55;
+  --text:#eef4ff;
+  --muted:#92a4c0;
+  --blue:#66adff;
+  --purple:#b69aff;
+  --green:#56e3b0;
+  --orange:#ffbd78;
+  --red:#ff8191;
+}
+
+* { box-sizing:border-box; }
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,"Segoe UI",sans-serif;
+}
+
+button,input { font:inherit; }
+button { cursor:pointer; }
+
+.hero {
+  height:100vh;
+  height:100svh;
+  min-height:570px;
+  padding:15px 3.5%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 53% 43%,#142b48 0%,transparent 57%),
+    var(--bg);
+}
+
+.nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:35px;
+}
+
+.brand {
+  font-weight:850;
+  font-size:17px;
+  letter-spacing:-.5px;
+}
+
+.brand span { color:var(--blue); }
+
+.nav-info {
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:1.5px;
+}
+
+.heading {
+  text-align:center;
+  margin:8px 0 14px;
+}
+
+.eyebrow {
+  color:var(--green);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+
+h1 {
+  font-size:clamp(28px,3vw,40px);
+  line-height:1.1;
+  letter-spacing:-1.7px;
+  margin:5px 0;
+}
+
+.heading p {
+  color:var(--muted);
+  font-size:12px;
+  margin:6px 0;
+}
+
+.workspace {
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr) 225px;
+  gap:12px;
+}
+
+.panel {
+  min-width:0;
+  min-height:0;
+  background:rgba(16,26,43,.94);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:14px;
+}
+
+.panel-heading {
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  margin-bottom:13px;
+}
+
+.mode-buttons {
+  display:flex;
+  gap:6px;
+  margin-bottom:17px;
+}
+
+.mode-btn {
+  flex:1;
+  border:1px solid var(--border);
+  background:#18263c;
+  color:var(--muted);
+  border-radius:7px;
+  padding:8px 3px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.mode-btn.active {
+  color:white;
+  border-color:var(--blue);
+  background:#203c60;
+}
+
+.field-label {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin:11px 0 5px;
+}
+
+input {
+  width:100%;
+  padding:9px;
+  color:white;
+  background:#091322;
+  border:1px solid var(--border);
+  border-radius:7px;
+  outline:none;
+}
+
+input:focus { border-color:var(--blue); }
+
+.code-card {
+  margin-top:20px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#091322;
+  padding:11px;
+}
+
+.code-label {
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:1px;
+  margin-bottom:9px;
+}
+
+.code-card pre {
+  color:#c5dcff;
+  font:11px/1.9 Consolas,monospace;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  margin:0;
+}
+
+.hint {
+  font-size:10px;
+  line-height:1.6;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+/* NETWORK AREA */
+
+.graph-panel {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  overflow:hidden;
+}
+
+.graph-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+
+.live-label {
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--green);
+  background:#14372f;
+  padding:6px 9px;
+  border-radius:20px;
+  border:1px solid #245b4a;
+}
+
+.graph {
+  width:100%;
+  flex:1;
+  min-height:0;
+  overflow:visible;
+}
+
+.graph svg {
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.grid-bg { opacity:.23; }
+
+.edge {
+  fill:none;
+  stroke:#385474;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  transition:stroke .3s;
+}
+
+.edge.active {
+  stroke:var(--green);
+  stroke-width:3.5;
+  stroke-dasharray:9 8;
+  animation:flow 1s linear infinite;
+  filter:drop-shadow(0 0 5px #56e3b0);
+}
+
+.edge.false-active {
+  stroke:var(--orange);
+  stroke-dasharray:8 7;
+  animation:flow 1s linear infinite;
+}
+
+@keyframes flow {
+  to { stroke-dashoffset:-34; }
+}
+
+.node {
+  fill:#142640;
+  stroke:#49688e;
+  stroke-width:2;
+  transition:all .3s;
+}
+
+.node.active {
+  fill:#16433a;
+  stroke:var(--green);
+  stroke-width:3;
+  filter:drop-shadow(0 0 12px #56e3b080);
+}
+
+.node.condition.active {
+  fill:#30284e;
+  stroke:var(--purple);
+  filter:drop-shadow(0 0 12px #b69aff80);
+}
+
+.node.exit.active {
+  fill:#493321;
+  stroke:var(--orange);
+  filter:drop-shadow(0 0 12px #ffbd7880);
+}
+
+.node-text {
+  fill:#f0f5ff;
+  font-size:15px;
+  font-weight:700;
+  text-anchor:middle;
+}
+
+.node-sub {
+  fill:#9db1cc;
+  font-size:10px;
+  text-anchor:middle;
+  letter-spacing:1px;
+}
+
+.path-label {
+  fill:var(--green);
+  font-size:12px;
+  font-weight:800;
+}
+
+.false-label {
+  fill:var(--orange);
+  font-size:12px;
+  font-weight:800;
+}
+
+.graph-controls {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  padding-top:10px;
+}
+
+.btn {
+  background:#1a2c46;
+  border:1px solid var(--border);
+  color:white;
+  padding:8px 15px;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.btn:hover { filter:brightness(1.2); }
+
+.btn.primary {
+  background:#2765a5;
+  border-color:#428bd2;
+}
+
+.btn:disabled {
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.progress-area {
+  padding-top:12px;
+}
+
+.progress-info {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:6px;
+}
+
+.progress-track {
+  height:4px;
+  background:#27374d;
+  border-radius:5px;
+  overflow:hidden;
+}
+
+.progress-bar {
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--blue),var(--green));
+  transition:width .3s;
+}
+
+/* RIGHT PANEL */
+
+.right-panel {
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+
+.status-card {
+  background:#0b1627;
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:11px;
+}
+
+.status-card small {
+  color:var(--muted);
+  font-size:10px;
+}
+
+.status-card strong {
+  display:block;
+  font-size:17px;
+  margin-top:5px;
+  color:var(--green);
+}
+
+.state-text {
+  color:#c6d4e9;
+  font-size:11px;
+  line-height:1.7;
+  min-height:60px;
+}
+
+.legend {
+  display:grid;
+  gap:9px;
+  margin-top:auto;
+  padding-top:12px;
+}
+
+.legend-item {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.dot {
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--blue);
+}
+
+.dot.green { background:var(--green); }
+.dot.purple { background:var(--purple); }
+.dot.orange { background:var(--orange); }
+
+.scroll-hint {
+  text-align:center;
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:1px;
+  padding-top:9px;
+}
+
+.scroll-hint span { color:var(--blue); }
+
+/* THEORY */
+
+.theory {
+  max-width:1050px;
+  padding:80px 5%;
+  margin:auto;
+}
+
+.section-tag {
+  color:var(--green);
+  font-size:10px;
+  letter-spacing:2px;
+  font-weight:800;
+}
+
+h2 {
+  font-size:clamp(27px,4vw,38px);
+  letter-spacing:-1px;
+  margin:8px 0;
+}
+
+.intro {
+  color:var(--muted);
+  max-width:720px;
+  font-size:14px;
+  line-height:1.9;
+}
+
+.concept {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:24px;
+  margin-top:25px;
+}
+
+.concept h3 { margin-top:0; }
+
+.concept p,.concept li {
+  color:#a9b9d0;
+  font-size:13px;
+  line-height:1.9;
+}
+
+.example {
+  background:#091322;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px;
+  color:#a9d3ff;
+  font:13px/1.9 Consolas,monospace;
+  overflow-x:auto;
+}
+
+.cards {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:18px;
+}
+
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+}
+
+.card p {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+}
+
+.quiz-feedback {
+  font-size:13px;
+  margin-top:12px;
+}
+
+footer {
+  border-top:1px solid var(--border);
+  text-align:center;
+  padding:23px;
+  color:var(--muted);
+  font-size:10px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1050px) {
+  .workspace {
+    grid-template-columns:190px minmax(0,1fr) 185px;
+    gap:8px;
+  }
+
+  .panel { padding:10px; }
+}
+
+@media(max-width:760px) {
+  .hero {
+    height:auto;
+    min-height:100svh;
+    overflow:visible;
+  }
+
+  .workspace {
+    display:flex;
+    flex-direction:column;
+  }
+
+  .graph-panel {
+    min-height:520px;
+    order:-1;
+  }
+
+  .graph { min-height:330px; }
+
+  .right-panel { min-height:230px; }
+}
+
+@media(max-width:480px) {
+  .cards { grid-template-columns:1fr; }
+  .theory { padding:55px 18px; }
+  .nav-info { display:none; }
+}
+</style>
+</head>
+
+<body>
+
+<section class="hero">
+
+  <header class="nav">
+    <div class="brand">PYTHON<span>LAB</span></div>
+    <div class="nav-info">INTERACTIVE CONCEPT EXPLORER</div>
+  </header>
+
+  <div class="heading">
+    <div class="eyebrow">PYTHON FUNDAMENTALS · 02</div>
+    <h1>Understanding Loops</h1>
+    <p>Explore the logic behind repetition through an interactive network.</p>
+  </div>
+
+  <main class="workspace">
+
+    <!-- LEFT: CODE -->
+
+    <aside class="panel">
+      <div class="panel-heading">01 / CODE EXPLORER</div>
+
+      <div class="mode-buttons">
+        <button class="mode-btn active" id="forBtn">For Loop</button>
+        <button class="mode-btn" id="whileBtn">While Loop</button>
+      </div>
+
+      <label class="field-label" for="start">Start value</label>
+      <input type="number" id="start" value="1" min="0" max="100">
+
+      <label class="field-label" for="end">End value</label>
+      <input type="number" id="end" value="5" min="1" max="100">
+
+      <div class="code-card">
+        <div class="code-label">PYTHON SOURCE CODE</div>
+        <pre id="code"></pre>
+      </div>
+
+      <p class="hint">
+        Change the range to explore how the loop behaves with different
+        starting and ending values.
+      </p>
+    </aside>
+
+    <!-- CENTER: NETWORK GRAPH -->
+
+    <section class="panel graph-panel">
+
+      <div class="graph-top">
+        <div class="panel-heading">02 / LOOP NETWORK</div>
+        <div class="live-label" id="liveStatus">● READY</div>
+      </div>
+
+      <div class="graph">
+
+        <svg viewBox="0 0 900 560"
+             preserveAspectRatio="xMidYMid meet"
+             role="img"
+             aria-label="Interactive Python loop flow network">
+
+          <defs>
+            <pattern id="dots" width="24" height="24"
+                     patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill="#6d91bd"/>
+            </pattern>
+
+            <marker id="arrowBlue" markerWidth="10"
+                    markerHeight="10" refX="8" refY="3"
+                    orient="auto">
+              <path d="M0 0 L0 6 L9 3 Z" fill="#66adff"/>
+            </marker>
+
+            <marker id="arrowGreen" markerWidth="10"
+                    markerHeight="10" refX="8" refY="3"
+                    orient="auto">
+              <path d="M0 0 L0 6 L9 3 Z" fill="#56e3b0"/>
+            </marker>
+
+            <marker id="arrowOrange" markerWidth="10"
+                    markerHeight="10" refX="8" refY="3"
+                    orient="auto">
+              <path d="M0 0 L0 6 L9 3 Z" fill="#ffbd78"/>
+            </marker>
+          </defs>
+
+          <rect width="900" height="560" fill="url(#dots)"
+                class="grid-bg"/>
+
+          <!-- CONNECTIONS -->
+
+          <path id="edgeStart"
+                class="edge"
+                d="M450 93 L450 125"
+                marker-end="url(#arrowBlue)"/>
+
+          <path id="edgeInit"
+                class="edge"
+                d="M450 195 L450 225"
+                marker-end="url(#arrowBlue)"/>
+
+          <path id="edgeTrue"
+                class="edge"
+                d="M450 305 L450 355"
+                marker-end="url(#arrowGreen)"/>
+
+          <path id="edgeFalse"
+                class="edge"
+                d="M535 270 C650 270 650 470 535 470"
+                marker-end="url(#arrowOrange)"/>
+
+          <path id="edgeBody"
+                class="edge"
+                d="M450 415 L450 450"
+                marker-end="url(#arrowGreen)"/>
+
+          <path id="edgeRepeat"
+                class="edge"
+                d="M450 505 C160 545 160 270 365 270"
+                marker-end="url(#arrowGreen)"/>
+
+          <!-- LABELS -->
+
+          <text x="465" y="115" class="path-label">NEXT</text>
+          <text x="465" y="337" class="path-label">TRUE</text>
+          <text x="657" y="353" class="false-label">FALSE</text>
+          <text x="175" y="425" class="path-label">REPEAT</text>
+
+          <!-- START NODE -->
+
+          <g id="startNode">
+            <rect class="node" x="365" y="35"
+                  width="170" height="58" rx="15"/>
+            <text class="node-sub" x="450" y="57">ENTRY POINT</text>
+            <text class="node-text" x="450" y="79">START</text>
+          </g>
+
+          <!-- INITIALIZE -->
+
+          <g id="initNode">
+            <rect class="node" x="365" y="125"
+                  width="170" height="70" rx="15"/>
+            <text class="node-sub" x="450" y="150">INITIALIZATION</text>
+            <text class="node-text" x="450" y="174">Initialize i</text>
+          </g>
+
+          <!-- CONDITION -->
+
+          <g id="conditionNode">
+            <rect class="node condition" x="350" y="225"
+                  width="200" height="80" rx="17"/>
+            <text class="node-sub" x="450" y="251">DECISION NODE</text>
+            <text class="node-text" x="450" y="275">Check Condition</text>
+            <text id="conditionSmall" class="node-sub"
+                  x="450" y="292">i ≤ 5 ?</text>
+          </g>
+
+          <!-- LOOP BODY -->
+
+          <g id="bodyNode">
+            <rect class="node" x="365" y="355"
+                  width="170" height="60" rx="15"/>
+            <text class="node-sub" x="450" y="379">EXECUTION</text>
+            <text class="node-text" x="450" y="400">Loop Body</text>
+          </g>
+
+          <!-- INCREMENT -->
+
+          <g id="incrementNode">
+            <rect class="node" x="365" y="450"
+                  width="170" height="55" rx="15"/>
+            <text class="node-sub" x="450" y="471">UPDATE</text>
+            <text class="node-text" x="450" y="491">Next Iteration</text>
+          </g>
+
+          <!-- EXIT -->
+
+          <g id="exitNode">
+            <rect class="node exit" x="700" y="440"
+                  width="160" height="65" rx="15"/>
+            <text class="node-sub" x="780" y="465">TERMINATION</text>
+            <text class="node-text" x="780" y="488">EXIT</text>
+          </g>
+
+          <!-- REPEAT LABEL NODE -->
+
+          <g>
+            <circle cx="175" cy="270" r="35"
+                    fill="#142640" stroke="#49688e"
+                    stroke-width="2"/>
+            <text x="175" y="266" text-anchor="middle"
+                  fill="#56e3b0" font-size="19">↻</text>
+            <text x="175" y="282" text-anchor="middle"
+                  fill="#b5c6dd" font-size="9">LOOP</text>
+          </g>
+
+        </svg>
+
+      </div>
+
+      <div class="graph-controls">
+        <button class="btn primary" id="runBtn">▶ Run</button>
+        <button class="btn" id="stepBtn">Step →</button>
+        <button class="btn" id="resetBtn">↺ Reset</button>
+      </div>
+
+      <div class="progress-area">
+        <div class="progress-info">
+          <span>NETWORK EXECUTION</span>
+          <span id="progressText">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar" id="progress"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: EXECUTION -->
+
+    <aside class="panel right-panel">
+
+      <div class="panel-heading">03 / EXECUTION STATE</div>
+
+      <div class="status-card">
+        <small>Current Operation</small>
+        <strong id="operation">Ready</strong>
+      </div>
+
+      <div class="status-card">
+        <small>Iteration Progress</small>
+        <strong id="iteration">0 / 5</strong>
+      </div>
+
+      <div class="status-card">
+        <small>Loop Condition</small>
+        <strong id="condition">Waiting</strong>
+      </div>
+
+      <div>
+        <div class="panel-heading">WHAT IS HAPPENING?</div>
+        <div class="state-text" id="explanation" aria-live="polite">
+          The loop network is ready. Start the simulation to explore
+          the execution path.
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="panel-heading">NETWORK LEGEND</div>
+        <div class="legend-item"><span class="dot"></span> Normal node</div>
+        <div class="legend-item"><span class="dot purple"></span> Decision node</div>
+        <div class="legend-item"><span class="dot green"></span> Active execution</div>
+        <div class="legend-item"><span class="dot orange"></span> Exit path</div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <div class="scroll-hint">SCROLL TO EXPLORE THE THEORY ↓</div>
+
+</section>
+
+<!-- THEORY -->
+
+<section class="theory">
+
+  <div class="section-tag">BEHIND THE VISUALIZATION</div>
+  <h2>How Do Python Loops Work?</h2>
+
+  <p class="intro">
+    A loop is a programming structure that repeatedly executes a block
+    of instructions. Instead of writing the same code multiple times,
+    we allow Python to manage repetition automatically.
+  </p>
+
+  <article class="concept">
+    <h3>01. The Logic of a Loop</h3>
+    <p>
+      Every loop follows an execution process. Python begins with an
+      initial state, checks whether a condition is satisfied, executes
+      the loop body, and continues until the loop should terminate.
+    </p>
+    <p>
+      In our network, the TRUE path represents another execution cycle,
+      while the FALSE path represents the exit from the loop.
+    </p>
+  </article>
+
+  <div class="cards">
+
+    <article class="card">
+      <h3>02. For Loop</h3>
+      <p>
+        A for loop iterates over the items of an iterable object.
+        It is useful when processing a known sequence of values.
+      </p>
+      <div class="example">
+for i in range(1, 6):
+    print(i)
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>03. While Loop</h3>
+      <p>
+        A while loop repeatedly executes its body as long as its
+        condition remains True. The programmer must update the
+        relevant state to avoid an unintended infinite loop.
+      </p>
+      <div class="example">
+i = 1
+
+while i <= 5:
+    print(i)
+    i += 1
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>04. Iteration</h3>
+      <p>
+        An iteration is one complete repetition of a loop body.
+        A loop may perform several iterations before terminating.
+      </p>
+    </article>
+
+    <article class="card">
+      <h3>05. Break and Continue</h3>
+      <p>
+        Break terminates the nearest enclosing loop. Continue
+        skips the rest of the current iteration and moves to
+        the next one.
+      </p>
+      <div class="example">
+for i in range(5):
+    if i == 2:
+        continue
+    if i == 4:
+        break
+    print(i)
+      </div>
+    </article>
+
+  </div>
+
+  <article class="concept">
+    <h3>06. Nested Loops</h3>
+    <p>
+      A nested loop is a loop placed inside another loop. The inner
+      loop executes completely for every iteration of the outer loop.
+    </p>
+    <div class="example">
+for i in range(2):
+    for j in range(3):
+        print(i, j)
+    </div>
+  </article>
+
+  <article class="concept">
+    <h3>07. Test Your Understanding</h3>
+    <p>What does this code print?</p>
+    <div class="example">
+for i in range(1, 4):
+    print(i)
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:15px">
+      <button class="btn quiz" data-answer="yes">1, 2, 3</button>
+      <button class="btn quiz" data-answer="no">1, 2, 3, 4</button>
+      <button class="btn quiz" data-answer="no">0, 1, 2, 3</button>
+    </div>
+
+    <p id="quizFeedback" class="quiz-feedback"
+       aria-live="polite"></p>
+  </article>
+
+</section>
+
+<footer>
+  PYTHON LAB · INTERACTIVE LEARNING EXPERIENCE
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let mode = "for";
+let start = 1;
+let end = 5;
+let values = [];
+let index = 0;
+let timer = null;
+let running = false;
+let phase = "ready";
+
+const nodes = [
+  "startNode",
+  "initNode",
+  "conditionNode",
+  "bodyNode",
+  "incrementNode",
+  "exitNode"
+];
+
+const edges = [
+  "edgeStart",
+  "edgeInit",
+  "edgeTrue",
+  "edgeFalse",
+  "edgeBody",
+  "edgeRepeat"
+];
+
+function readInputs() {
+  const s = Number($("start").value);
+  const e = Number($("end").value);
+
+  if (!Number.isInteger(s) || !Number.isInteger(e) ||
+      s < 0 || e < s || e > 100 || e-s > 19) {
+    alert("Please enter a valid range of up to 20 values.");
+    return false;
+  }
+
+  start = s;
+  end = e;
+  return true;
+}
+
+function makeCode() {
+  if (mode === "for") {
+    $("code").textContent =
+`for i in range(${start}, ${end+1}):
+    print(i)`;
+  } else {
+    $("code").textContent =
+`i = ${start}
+
+while i <= ${end}:
+    print(i)
+    i += 1`;
+  }
+
+  $("conditionSmall").textContent =
+    `i <= ${end} ?`;
+}
+
+function clearGraph() {
+  nodes.forEach(id => $(id).querySelector(".node").classList.remove("active"));
+  edges.forEach(id => $(id).classList.remove("active","false-active"));
+}
+
+function activateNode(id) {
+  const shape = $(id).querySelector(".node");
+  if (shape) shape.classList.add("active");
+}
+
+function activateEdge(id, type="active") {
+  $(id).classList.add(type);
+}
+
+function updateState(operation, condition, explanation) {
+  $("operation").textContent = operation;
+  $("condition").textContent = condition;
+  $("explanation").textContent = explanation;
+}
+
+function updateProgress() {
+  const percent = Math.round(index / values.length * 100);
+  $("progress").style.width = percent + "%";
+  $("progressText").textContent = percent + "%";
+  $("iteration").textContent = `${index} / ${values.length}`;
+}
+
+function stopTimer() {
+  if (timer) clearInterval(timer);
+  timer = null;
+  running = false;
+  $("runBtn").textContent = "▶ Run";
+}
+
+function reset() {
+  stopTimer();
+
+  if (!readInputs()) return;
+
+  values = Array.from(
+    {length:end-start+1},
+    (_,i) => start+i
+  );
+
+  index = 0;
+  phase = "ready";
+
+  clearGraph();
+  activateNode("startNode");
+
+  $("liveStatus").textContent = "● READY";
+  $("iteration").textContent = `0 / ${values.length}`;
+  $("progress").style.width = "0%";
+  $("progressText").textContent = "0%";
+
+  updateState(
+    "Ready",
+    "Waiting",
+    "The network is ready. Start the simulation to follow the execution path."
+  );
+}
+
+function finish() {
+  stopTimer();
+  clearGraph();
+
+  activateNode("conditionNode");
+  activateNode("exitNode");
+  activateEdge("edgeFalse","false-active");
+
+  $("liveStatus").textContent = "● COMPLETED";
+
+  updateState(
+    "Loop finished",
+    "FALSE",
+    "The condition is now False. Python exits the loop and moves beyond the loop body."
+  );
+
+  index = values.length;
+  updateProgress();
+  $("runBtn").disabled = true;
+  $("stepBtn").disabled = true;
+}
+
+function step() {
+  if (index >= values.length) {
+    finish();
+    return;
+  }
+
+  clearGraph();
+
+  if (index === 0) {
+    activateNode("startNode");
+    activateNode("initNode");
+    activateEdge("edgeStart");
+    activateEdge("edgeInit");
+
+    updateState(
+      "Initialization",
+      "Ready",
+      `Python initializes the loop variable. The first value is ${start}.`
+    );
+
+    if (mode === "for") {
+      // For loop obtains its first value from the iterable.
+    }
+  } else {
+    activateEdge("edgeRepeat");
+    activateNode("initNode");
+    activateEdge("edgeInit");
+
+    updateState(
+      "Next iteration",
+      "Checking again",
+      "The previous iteration has finished. Control returns to the condition for another cycle."
+    );
+  }
+
+  activateNode("conditionNode");
+  activateEdge("edgeTrue");
+
+  $("liveStatus").textContent = "● EXECUTING";
+
+  updateState(
+    "Condition check",
+    "TRUE",
+    `The loop has another value to process. Python follows the TRUE path to the loop body.`
+  );
+
+  activateNode("bodyNode");
+  activateEdge("edgeBody");
+
+  updateState(
+    "Executing body",
+    "TRUE",
+    `Iteration ${index+1}: Python executes the loop body for value ${values[index]}.`
+  );
+
+  activateNode("incrementNode");
+
+  if (mode === "while") {
+    updateState(
+      "Updating variable",
+      "TRUE",
+      `Python completes the body and increases i to ${values[index]+1}. The next condition check will follow.`
+    );
+  } else {
+    updateState(
+      "Next sequence item",
+      "TRUE",
+      `Python moves to the next item in the iterable after processing ${values[index]}.`
+    );
+  }
+
+  index++;
+  updateProgress();
+
+  if (index === values.length) {
+    // Show the exit path on the next explicit step or completion.
+    finish();
+  }
+}
+
+function run() {
+  if (running) {
+    stopTimer();
+    return;
+  }
+
+  if (index >= values.length) reset();
+
+  running = true;
+  $("runBtn").textContent = "Ⅱ Pause";
+
+  timer = setInterval(() => {
+    if (index < values.length) {
+      step();
+    } else {
+      finish();
+    }
+  }, 1200);
+}
+
+function changeMode(newMode) {
+  stopTimer();
+  mode = newMode;
+
+  $("forBtn").classList.toggle("active",mode==="for");
+  $("whileBtn").classList.toggle("active",mode==="while");
+
+  makeCode();
+  reset();
+}
+
+$("forBtn").addEventListener("click",()=>changeMode("for"));
+$("whileBtn").addEventListener("click",()=>changeMode("while"));
+
+$("start").addEventListener("change",()=>{
+  makeCode();
+  reset();
+});
+
+$("end").addEventListener("change",()=>{
+  makeCode();
+  reset();
+});
+
+$("runBtn").addEventListener("click",run);
+$("stepBtn").addEventListener("click",step);
+$("resetBtn").addEventListener("click",reset);
+
+document.querySelectorAll(".quiz").forEach(button=>{
+  button.addEventListener("click",()=>{
+    $("quizFeedback").textContent =
+      button.dataset.answer === "yes"
+      ? "Correct! range(1, 4) produces 1, 2, 3."
+      : "Try again! The ending value in range() is excluded.";
+
+    $("quizFeedback").style.color =
+      button.dataset.answer === "yes"
+      ? "#56e3b0" : "#ffbd78";
+  });
+});
+
+makeCode();
+reset();
+</script>
+
+</body>
+</html>
